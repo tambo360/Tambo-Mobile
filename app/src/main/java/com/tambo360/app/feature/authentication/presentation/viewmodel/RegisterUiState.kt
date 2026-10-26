@@ -5,5 +5,5 @@ import com.tambo360.app.feature.authentication.domain.model.RegisterUser
 data class RegisterUiState(
     val loading: Boolean = false,
     val data: RegisterUser? = null,
-    val error: String? = null
+    val error: String = ""
 )

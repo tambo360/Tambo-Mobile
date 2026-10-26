@@ -22,7 +22,7 @@ class RegisterViewModel @Inject constructor(
 
     fun registerUser(name: String, email: String, password: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(loading = true, error = null) }
+            _uiState.update { it.copy(loading = true) }
 
             val request = RegisterUserRequest(
                 nombre = name,
