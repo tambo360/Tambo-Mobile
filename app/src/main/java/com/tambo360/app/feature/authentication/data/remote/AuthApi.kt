@@ -1,0 +1,18 @@
+package com.tambo360.app.feature.authentication.data.remote
+
+import com.tambo360.app.feature.authentication.data.dto.RegisterUserRequest
+import com.tambo360.app.feature.authentication.data.dto.RegisterUserResponse
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Headers
+import retrofit2.http.POST
+
+interface AuthApi {
+
+    @POST("auth/crear-cuenta")
+    @Headers("Content-Type: application/json")
+    suspend fun registerUser(
+        @Body request: RegisterUserRequest
+    ): Response<RegisterUserResponse>
+
+}
