@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    kotlin("plugin.serialization") version "2.0.0"
 }
 
 android {
@@ -64,4 +65,12 @@ dependencies {
     implementation(libs.hilt.android.v257)
     ksp(libs.hilt.android.compiler.v257)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    //Retrofit
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.logging.interceptor)
+
+    //NAVIGATION
+    implementation(libs.androidx.navigation.compose)
 }
