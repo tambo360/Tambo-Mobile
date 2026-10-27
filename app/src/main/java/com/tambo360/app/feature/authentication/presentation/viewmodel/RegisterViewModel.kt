@@ -3,6 +3,7 @@ package com.tambo360.app.feature.authentication.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tambo360.app.core.network.NetworkResult
+import com.tambo360.app.core.util.JsonUtils
 import com.tambo360.app.feature.authentication.data.dto.RegisterUserRequest
 import com.tambo360.app.feature.authentication.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +37,8 @@ class RegisterViewModel @Inject constructor(
                 }
 
                 is NetworkResult.Failed -> {
-                    _uiState.update { it.copy(loading = false, error = result.message) }
+                    val cleanMessage = JsonUtils.getErrorMessage(result.message)
+                    _uiState.update { it.copy(loading = false, error = cleanMessage) }
                 }
             }
         }
