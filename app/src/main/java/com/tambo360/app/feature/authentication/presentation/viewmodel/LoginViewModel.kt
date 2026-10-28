@@ -2,6 +2,7 @@ package com.tambo360.app.feature.authentication.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tambo360.app.core.data.TokenRepository
 import com.tambo360.app.core.network.NetworkResult
 import com.tambo360.app.core.util.JsonUtils
 import com.tambo360.app.feature.authentication.data.dto.LoginUserRequest
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val tokenRepo : TokenRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -32,6 +34,7 @@ class LoginViewModel @Inject constructor(
 
             when (val result = repository.loginUser(request)) {
                 is NetworkResult.Success -> {
+                    tokenRepo.saveTokens(result.data.data.token)
                     _uiState.update { it.copy(loading = false, data = result.data) }
                 }
 
