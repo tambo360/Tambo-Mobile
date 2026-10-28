@@ -1,5 +1,7 @@
 package com.tambo360.app.feature.authentication.data.remote
 
+import com.tambo360.app.feature.authentication.data.dto.LoginUserRequest
+import com.tambo360.app.feature.authentication.data.dto.LoginUserResponse
 import com.tambo360.app.feature.authentication.data.dto.RegisterUserRequest
 import com.tambo360.app.feature.authentication.data.dto.RegisterUserResponse
 import retrofit2.Response
@@ -14,5 +16,11 @@ interface AuthApi {
     suspend fun registerUser(
         @Body request: RegisterUserRequest
     ): Response<RegisterUserResponse>
+
+    @POST("auth/iniciar-sesion")
+    @Headers("Content-Type: application/json")
+    suspend fun loginUser(
+        @Body request: LoginUserRequest
+    ): Response<LoginUserResponse>
 
 }

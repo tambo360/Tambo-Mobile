@@ -95,7 +95,7 @@ fun RegisterContent(
                     Image(
                         painter = painterResource(id = R.drawable.logotipo),
                         contentDescription = "Logo Tambo",
-                        modifier = Modifier.height(48.dp)
+                        modifier = Modifier.size(120.dp)
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
@@ -142,6 +142,24 @@ fun RegisterContent(
                         onValueChange = {
                             password = it
                         }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Requisitos: ")
+                            }
+                            withStyle(SpanStyle(fontWeight = FontWeight.Normal)) {
+                                append("8 caracteres, mayúscula (A-Z), minúscula (a-z) y carácter especial.")
+                            }
+                        },
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            lineHeight = 12.sp,
+                            color = Color(0xFF4B5563)
+                        ),
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(14.dp))
                     ConfirmPasswordField(
@@ -190,7 +208,7 @@ fun RegisterContent(
                                     )
                                 )
                                 Icon(
-                                    painter = painterResource(id = R.drawable.eye_on),
+                                    painter = painterResource(id = R.drawable.arrowright),
                                     contentDescription = "",
                                     tint = Color(0xFFFFFBF1)
                                 )

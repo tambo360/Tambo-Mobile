@@ -192,24 +192,6 @@ fun PasswordField(
             imeAction = ImeAction.Next
         )
     )
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = buildAnnotatedString {
-            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                append("Requisitos: ")
-            }
-            withStyle(SpanStyle(fontWeight = FontWeight.Normal)) {
-                append("8 caracteres, mayúscula (A-Z), minúscula (a-z) y carácter especial.")
-            }
-        },
-        style = TextStyle(
-            fontSize = 12.sp,
-            lineHeight = 12.sp,
-            color = Color(0xFF4B5563)
-        ),
-        textAlign = TextAlign.Start,
-        modifier = Modifier.fillMaxWidth()
-    )
 }
 
 @Composable
@@ -219,7 +201,7 @@ fun ConfirmPasswordField(
 ) {
     var isVisible by remember { mutableStateOf(false) }
     Text(
-        text = "Confirmar Contraseña *",
+        text = "Confirmar Contraseña ",
         style = TextStyle(
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,

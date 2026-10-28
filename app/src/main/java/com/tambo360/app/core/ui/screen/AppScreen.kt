@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -15,7 +16,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.tambo360.app.core.ui.viewmodel.StartScreenViewModel
 import com.tambo360.app.core.ui.viewmodel.UiState
-import com.tambo360.app.feature.authentication.presentation.content.RegisterContent
+import com.tambo360.app.feature.authentication.presentation.screen.CheckEmailScreen
+import com.tambo360.app.feature.authentication.presentation.screen.LoginScreen
 import com.tambo360.app.feature.authentication.presentation.screen.RegisterScreen
 
 @Composable
@@ -23,13 +25,33 @@ fun AppScreen(
     viewModel: StartScreenViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
+
+    val token by viewModel.tokenState.collectAsState()
+    LaunchedEffect(token) {
+        token?.let {
+            println("Token recibido desde el deeplink: $it")
+        }
+    }
+
     when (state) {
+        UiState.Login -> {
+            LoginScreen(
+                goToRecoverPassword = {  },
+                goToRegister = { viewModel.updateUiState(state = UiState.Register) },
+                goTo = { viewModel.updateUiState(state = UiState.Home) }
+            )
+        }
+
         UiState.Register -> {
             RegisterScreen(
                 goTo = {
-                    viewModel.updateUiState(state = UiState.Home)
+                    viewModel.updateUiState(state = UiState.CheckEmail)
                 }
             )
+        }
+
+        UiState.CheckEmail -> {
+            CheckEmailScreen()
         }
 
         UiState.Home -> {
@@ -39,7 +61,7 @@ fun AppScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "REVISA EMAIL",
+                    text = "HOME",
                     fontSize = 20.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
