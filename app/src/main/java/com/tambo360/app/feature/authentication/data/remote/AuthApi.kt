@@ -4,6 +4,8 @@ import com.tambo360.app.feature.authentication.data.dto.LoginUserRequest
 import com.tambo360.app.feature.authentication.data.dto.LoginUserResponse
 import com.tambo360.app.feature.authentication.data.dto.RegisterUserRequest
 import com.tambo360.app.feature.authentication.data.dto.RegisterUserResponse
+import com.tambo360.app.feature.authentication.data.dto.VerifyEmailRequest
+import com.tambo360.app.feature.authentication.data.dto.VerifyEmailResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Headers
@@ -22,5 +24,11 @@ interface AuthApi {
     suspend fun loginUser(
         @Body request: LoginUserRequest
     ): Response<LoginUserResponse>
+
+    @POST("auth/verificar-email")
+    @Headers("Content-Type: application/json")
+    suspend fun verifyEmail(
+        @Body request: VerifyEmailRequest
+    ): Response<VerifyEmailResponse>
 
 }

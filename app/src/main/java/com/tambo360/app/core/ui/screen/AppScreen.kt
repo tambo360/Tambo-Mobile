@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,18 +24,11 @@ fun AppScreen(
     viewModel: StartScreenViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-
     val token by viewModel.tokenState.collectAsState()
-    LaunchedEffect(token) {
-        token?.let {
-            println("Token recibido desde el deeplink: $it")
-        }
-    }
-
     when (state) {
         UiState.Login -> {
             LoginScreen(
-                goToRecoverPassword = {  },
+                goToRecoverPassword = { },
                 goToRegister = { viewModel.updateUiState(state = UiState.Register) },
                 goTo = { viewModel.updateUiState(state = UiState.Home) }
             )
@@ -51,7 +43,12 @@ fun AppScreen(
         }
 
         UiState.CheckEmail -> {
-            CheckEmailScreen()
+            CheckEmailScreen(
+                token = token,
+                onVerificationSuccess = {
+                    viewModel.updateUiState(state = UiState.Home)
+                }
+            )
         }
 
         UiState.Home -> {

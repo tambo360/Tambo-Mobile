@@ -104,7 +104,7 @@ fun LoginContent(
                     Text(
                         text = "Ingresa tus credenciales para \nempezar a usar la plataforma.",
                         fontWeight = FontWeight.W400,
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         lineHeight = 22.sp,
                         color = Color(0xFF4B5563),
                         textAlign = TextAlign.Center,

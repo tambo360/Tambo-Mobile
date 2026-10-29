@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -62,6 +63,8 @@ fun RegisterContent(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    val isButtonEnabled = name.isNotBlank() && email.isNotBlank()
+            && password.isNotBlank() && password == confirmPassword
 
     Box(
         modifier = Modifier
@@ -79,6 +82,7 @@ fun RegisterContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 32.dp, vertical = 16.dp)
+                .imePadding()
                 .verticalScroll(scrollState),
         ) {
             Card(
@@ -185,7 +189,8 @@ fun RegisterContent(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF0B1001)
                         ),
-                        contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
+                        contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
+                        enabled = isButtonEnabled
                     ) {
                         if (state.loading) {
                             CircularProgressIndicator(

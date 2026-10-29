@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,9 +29,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tambo360.app.R
+import com.tambo360.app.feature.authentication.presentation.viewmodel.VerifyEmailUiState
 
 @Composable
-fun CheckEmailContent(){
+fun CheckEmailContent(
+    state: VerifyEmailUiState
+){
     val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
@@ -86,6 +90,14 @@ fun CheckEmailContent(){
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    if (state.loading){
+                        Spacer(modifier = Modifier.height(20.dp))
+                        CircularProgressIndicator(
+                            color = Color.Black,
+                            modifier = Modifier.size(40.dp),
+                            strokeWidth = 2.5.dp
+                        )
+                    }
                 }
             }
         }

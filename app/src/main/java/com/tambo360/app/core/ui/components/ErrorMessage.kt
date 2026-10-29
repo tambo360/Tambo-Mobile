@@ -55,8 +55,9 @@ fun ErrorMessage(
         Text(
             text = message,
             color = errorColor,
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontWeight = FontWeight.W600,
+            fontSize = 13.sp,
+            lineHeight = 15.sp
         )
     }
 }
