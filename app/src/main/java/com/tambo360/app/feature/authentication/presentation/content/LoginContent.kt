@@ -71,7 +71,7 @@ fun LoginContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 16.dp)
+                .padding(horizontal = 28.dp, vertical = 16.dp)
                 .verticalScroll(scrollState),
         ) {
             Card(
@@ -82,7 +82,7 @@ fun LoginContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(24.dp),
+                        .padding(horizontal = 18.dp, vertical = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(

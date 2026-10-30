@@ -28,14 +28,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tambo360.app.R
+import com.tambo360.app.feature.authentication.presentation.components.ResendEmailButton
+import com.tambo360.app.feature.authentication.presentation.viewmodel.TimerUiState
 import com.tambo360.app.feature.authentication.presentation.viewmodel.VerifyEmailUiState
 
 @Composable
 fun CheckEmailContent(
-    state: VerifyEmailUiState
+    state: VerifyEmailUiState,
+    timerState: TimerUiState,
+    onResendClick: () -> Unit
 ){
     val scrollState = rememberScrollState()
+    val buttonText = if (timerState.isRunning) {
+        "Reenviar email (${timerState.formattedTime})"
+    } else {
+        "Reenviar email"
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +62,7 @@ fun CheckEmailContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 16.dp)
+                .padding(horizontal = 28.dp, vertical = 16.dp)
                 .verticalScroll(scrollState),
         ) {
             Card(
@@ -62,7 +73,7 @@ fun CheckEmailContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(24.dp),
+                        .padding(horizontal = 18.dp, vertical = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
@@ -89,6 +100,12 @@ fun CheckEmailContent(
                         color = Color(0xFF4B5563),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    ResendEmailButton(
+                        text = buttonText,
+                        enabled = !timerState.isRunning,
+                        onClick = onResendClick
                     )
                     if (state.loading){
                         Spacer(modifier = Modifier.height(20.dp))

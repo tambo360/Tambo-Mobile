@@ -15,6 +15,7 @@ fun CheckEmailScreen(
     viewModel: VerifyEmailViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val timerState by viewModel.timerState.collectAsStateWithLifecycle()
     LaunchedEffect(token) {
         if (!token.isNullOrEmpty()) {
             viewModel.verifyEmail(token)
@@ -27,6 +28,11 @@ fun CheckEmailScreen(
     }
 
     CheckEmailContent(
-        state = state
+        state = state,
+        timerState = timerState,
+        onResendClick = {
+            viewModel.configureTimer(180L)
+            viewModel.startTimer()
+        }
     )
 }
