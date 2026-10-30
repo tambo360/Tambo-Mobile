@@ -10,6 +10,7 @@ import com.tambo360.app.feature.authentication.presentation.viewmodel.VerifyEmai
 
 @Composable
 fun CheckEmailScreen(
+    email : String,
     token: String?,
     onVerificationSuccess: () -> Unit,
     viewModel: VerifyEmailViewModel = hiltViewModel()

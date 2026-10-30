@@ -46,7 +46,7 @@ class StartScreenViewModel @Inject constructor(
             val token = uri.getQueryParameter("token")
             if (!token.isNullOrEmpty()) {
                 _tokenState.update { token }
-                _uiState.update { UiState.CheckEmail }
+                _uiState.update { UiState.CheckEmail() }
             }
         }
     }
@@ -56,6 +56,6 @@ class StartScreenViewModel @Inject constructor(
 sealed class UiState {
     data object Login : UiState()
     data object Register : UiState()
-    data object CheckEmail : UiState()
+    data class CheckEmail(val email: String = "") : UiState()
     data object Home : UiState()
 }

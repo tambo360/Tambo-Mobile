@@ -25,7 +25,7 @@ fun AppScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val token by viewModel.tokenState.collectAsState()
-    when (state) {
+    when (val currentState = state) {
         UiState.Login -> {
             LoginScreen(
                 goToRecoverPassword = { },
@@ -36,14 +36,15 @@ fun AppScreen(
 
         UiState.Register -> {
             RegisterScreen(
-                goTo = {
-                    viewModel.updateUiState(state = UiState.CheckEmail)
+                goTo = { email ->
+                    viewModel.updateUiState(state = UiState.CheckEmail(email))
                 }
             )
         }
 
-        UiState.CheckEmail -> {
+        is UiState.CheckEmail -> {
             CheckEmailScreen(
+                email = currentState.email,
                 token = token,
                 onVerificationSuccess = {
                     viewModel.updateUiState(state = UiState.Home)
