@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tambo360.app.core.network.NetworkResult
 import com.tambo360.app.core.util.JsonUtils
+import com.tambo360.app.feature.authentication.data.dto.ResendVerificationRequest
 import com.tambo360.app.feature.authentication.data.dto.VerifyEmailRequest
 import com.tambo360.app.feature.authentication.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,6 +50,28 @@ class VerifyEmailViewModel @Inject constructor(
                 is NetworkResult.Failed -> {
                     val cleanMessage = JsonUtils.getErrorMessage(result.message)
                     _uiState.update { it.copy(loading = false, error = cleanMessage) }
+                }
+            }
+        }
+    }
+    fun resendVerification(email: String) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(resendLoading = true, resendError = "", resendData = null) }
+
+            val request = ResendVerificationRequest(
+                correo = email
+            )
+
+            when (val result = repository.resendVerification(request)) {
+                is NetworkResult.Success -> {
+                    _uiState.update { it.copy(resendLoading = false, resendData = result.data) }
+                    configureTimer(180L)
+                    startTimer()
+                }
+
+                is NetworkResult.Failed -> {
+                    val cleanMessage = JsonUtils.getErrorMessage(result.message)
+                    _uiState.update { it.copy(resendLoading = false, resendError = cleanMessage) }
                 }
             }
         }

@@ -3,8 +3,10 @@ package com.tambo360.app.feature.authentication.presentation.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ResendEmailButton(
     text: String,
+    loading : Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -36,12 +39,20 @@ fun ResendEmailButton(
             bottom = 16.dp
         )
     ) {
-        Text(
-            text = text,
-            fontSize = 16.sp,
-            lineHeight = 24.sp,
-            fontWeight = FontWeight.Normal,
-            color = if (enabled) Color.Green.copy(0.5f) else Color(0xFF252525).copy(alpha = 0.5f)
-        )
+        if (loading){
+            CircularProgressIndicator(
+                color = Color.Black,
+                modifier = Modifier.size(30.dp),
+                strokeWidth = 2.5.dp
+            )
+        }else{
+            Text(
+                text = text,
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                fontWeight = FontWeight.Normal,
+                color = if (enabled) Color.Green.copy(0.5f) else Color(0xFF252525).copy(alpha = 0.5f)
+            )
+        }
     }
 }

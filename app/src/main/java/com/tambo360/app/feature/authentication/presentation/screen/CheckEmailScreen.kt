@@ -32,8 +32,7 @@ fun CheckEmailScreen(
         state = state,
         timerState = timerState,
         onResendClick = {
-            viewModel.configureTimer(180L)
-            viewModel.startTimer()
+            viewModel.resendVerification(email = email)
         }
     )
 }

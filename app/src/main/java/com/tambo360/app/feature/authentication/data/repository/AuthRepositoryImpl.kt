@@ -6,15 +6,20 @@ import com.tambo360.app.core.network.NetworkResult
 import com.tambo360.app.core.network.safeApiCall
 import com.tambo360.app.feature.authentication.data.dto.LoginUserRequest
 import com.tambo360.app.feature.authentication.data.dto.RegisterUserRequest
+import com.tambo360.app.feature.authentication.data.dto.ResendVerificationRequest
 import com.tambo360.app.feature.authentication.data.dto.VerifyEmailRequest
 import com.tambo360.app.feature.authentication.data.mapper.LoginUserMapper.toDomain
 import com.tambo360.app.feature.authentication.data.mapper.RegisterUserMapper.toDomain
+import com.tambo360.app.feature.authentication.data.mapper.ResendVerificationMapper.toDomain
 import com.tambo360.app.feature.authentication.data.mapper.VerifyEmailMapper.toDomain
 import com.tambo360.app.feature.authentication.data.remote.AuthApi
 import com.tambo360.app.feature.authentication.domain.model.LoginUser
 import com.tambo360.app.feature.authentication.domain.model.RegisterUser
+import com.tambo360.app.feature.authentication.domain.model.ResendVerification
 import com.tambo360.app.feature.authentication.domain.model.VerifyEmail
 import com.tambo360.app.feature.authentication.domain.repository.AuthRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -68,6 +73,23 @@ class AuthRepositoryImpl @Inject constructor(
 
             is NetworkResult.Failed -> {
                 NetworkResult.Failed(result.message)
+            }
+        }
+    }
+
+    override suspend fun resendVerification(request: ResendVerificationRequest): NetworkResult<ResendVerification> {
+        return withContext(Dispatchers.IO) {
+            val result = safeApiCall {
+                authApi.resendVerification(request)
+            }
+            when (result) {
+                is NetworkResult.Success -> {
+                    NetworkResult.Success(result.data.toDomain())
+                }
+
+                is NetworkResult.Failed -> {
+                    NetworkResult.Failed(result.message)
+                }
             }
         }
     }

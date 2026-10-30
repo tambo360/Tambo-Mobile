@@ -104,17 +104,10 @@ fun CheckEmailContent(
                     Spacer(modifier = Modifier.height(20.dp))
                     ResendEmailButton(
                         text = buttonText,
+                        loading = state.resendLoading,
                         enabled = !timerState.isRunning,
                         onClick = onResendClick
                     )
-                    if (state.loading){
-                        Spacer(modifier = Modifier.height(20.dp))
-                        CircularProgressIndicator(
-                            color = Color.Black,
-                            modifier = Modifier.size(40.dp),
-                            strokeWidth = 2.5.dp
-                        )
-                    }
                 }
             }
         }
