@@ -41,12 +41,20 @@ class StartScreenViewModel @Inject constructor(
 
     fun handleDeepLink(intent: Intent?) {
         val uri = intent?.data ?: return
+        val token = uri.getQueryParameter("token")
 
-        if (uri.path == "/verificar") {
-            val token = uri.getQueryParameter("token")
-            if (!token.isNullOrEmpty()) {
-                _tokenState.update { token }
-                _uiState.update { UiState.CheckEmail() }
+        when (uri.path) {
+            "/verificar" -> {
+                if (!token.isNullOrEmpty()) {
+                    _tokenState.update { token }
+                    _uiState.update { UiState.CheckEmail() }
+                }
+            }
+            "/recuperar-contrasena" -> {
+                if (!token.isNullOrEmpty()) {
+                    _tokenState.update { token }
+                    _uiState.update { UiState.ForgotCheck() }
+                }
             }
         }
     }
@@ -56,6 +64,9 @@ class StartScreenViewModel @Inject constructor(
 sealed class UiState {
     data object Login : UiState()
     data object Register : UiState()
+    data object Forgot : UiState()
+    data object ChangePassword : UiState()
+    data class ForgotCheck(val email: String = "") : UiState()
     data class CheckEmail(val email: String = "") : UiState()
     data object Home : UiState()
 }

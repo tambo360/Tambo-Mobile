@@ -44,7 +44,7 @@ import com.tambo360.app.R
 import com.tambo360.app.core.ui.components.ErrorMessage
 import com.tambo360.app.feature.authentication.presentation.components.EmailField
 import com.tambo360.app.feature.authentication.presentation.components.PasswordField
-import com.tambo360.app.feature.authentication.presentation.viewmodel.LoginUiState
+import com.tambo360.app.feature.authentication.presentation.viewmodel.states.LoginUiState
 
 @Composable
 fun LoginContent(
@@ -86,11 +86,10 @@ fun LoginContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.logotipo),
+                        painter = painterResource(id = R.drawable.newlogo),
                         contentDescription = "Logo Tambo",
                         modifier = Modifier.size(120.dp)
                     )
-                    Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         text = "Bienvenido",
                         fontWeight = FontWeight.W700,
@@ -141,7 +140,7 @@ fun LoginContent(
                         ErrorMessage(message = state.error)
                         Spacer(modifier = Modifier.height(10.dp))
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
                     Button(
                         onClick = {
                             onLoginClick(email, password)

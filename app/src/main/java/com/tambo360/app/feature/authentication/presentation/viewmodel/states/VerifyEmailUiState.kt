@@ -1,4 +1,4 @@
-package com.tambo360.app.feature.authentication.presentation.viewmodel
+package com.tambo360.app.feature.authentication.presentation.viewmodel.states
 
 import com.tambo360.app.feature.authentication.domain.model.ResendVerification
 import com.tambo360.app.feature.authentication.domain.model.VerifyEmail

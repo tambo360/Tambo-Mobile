@@ -18,16 +18,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tambo360.app.R
@@ -171,7 +168,7 @@ fun PasswordField(
         shape = RoundedCornerShape(8.dp),
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
-            val image = if (isVisible) R.drawable.eye_off else R.drawable.eye_on
+            val image = if (isVisible) R.drawable.eye_on else R.drawable.eye_off
             IconButton(onClick = { isVisible = !isVisible }) {
                 Icon(
                     painter = painterResource(id = image),
@@ -232,7 +229,7 @@ fun ConfirmPasswordField(
         shape = RoundedCornerShape(8.dp),
         visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
-            val image = if (isVisible) R.drawable.eye_off else R.drawable.eye_on
+            val image = if (isVisible) R.drawable.eye_on else R.drawable.eye_off
             IconButton(onClick = { isVisible = !isVisible }) {
                 Icon(
                     painter = painterResource(id = image),
@@ -245,6 +242,148 @@ fun ConfirmPasswordField(
             unfocusedContainerColor = Color.White,
             focusedBorderColor = Color(0xFFDDE4ED),
             unfocusedBorderColor = Color(0xFFDDE4ED),
+            focusedTextColor = Color(0xFF1F1F1F),
+            unfocusedTextColor = Color(0xFF1F1F1F)
+        ),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        )
+    )
+}
+
+@Composable
+fun NewPasswordField(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    var isVisible by remember { mutableStateOf(false) }
+
+    Text(
+        text = "Nueva Contraseña *",
+        style = TextStyle(
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            letterSpacing = 0.14.sp,
+            color = Color(0xFF0B1001)
+        ),
+        textAlign = TextAlign.Start,
+        modifier = Modifier.fillMaxWidth()
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        placeholder = {
+            Text(
+                text = "••••••••••••",
+                style = TextStyle(
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    letterSpacing = 0.1.sp,
+                    color = Color(0xFF4B5563)
+                )
+            )
+        },
+        shape = RoundedCornerShape(8.dp),
+        visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            val image = if (isVisible) R.drawable.eye_on else R.drawable.eye_off
+            IconButton(onClick = { isVisible = !isVisible }) {
+                Icon(
+                    painter = painterResource(id = image),
+                    contentDescription = null
+                )
+            }
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            focusedBorderColor = Color(0xFFBABABA),
+            unfocusedBorderColor = Color(0xFFBABABA),
+            focusedTextColor = Color(0xFF1F1F1F),
+            unfocusedTextColor = Color(0xFF1F1F1F)
+        ),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Next
+        )
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+    Text(
+        text = "Requisitos: 8 caracteres, mayuscula (A-Z), minuscula (a-z) y caracter especial.",
+        style = TextStyle(
+            fontWeight = FontWeight.Normal,
+            fontSize = 12.sp,
+            lineHeight = 12.sp,
+            color = Color(0xFF4B5563)
+        ),
+        textAlign = TextAlign.Start,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+fun ConfirmNewPasswordField(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    var isVisible by remember { mutableStateOf(false) }
+
+    Text(
+        text = "Confirmar nueva contraseña *",
+        style = TextStyle(
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            letterSpacing = 0.14.sp,
+            color = Color(0xFF0B1001)
+        ),
+        textAlign = TextAlign.Start,
+        modifier = Modifier.fillMaxWidth()
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        placeholder = {
+            Text(
+                text = "••••••••••••",
+                style = TextStyle(
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    letterSpacing = 0.1.sp,
+                    color = Color(0xFF4B5563)
+                )
+            )
+        },
+        shape = RoundedCornerShape(8.dp),
+        visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            val image = if (isVisible) R.drawable.eye_on else R.drawable.eye_off
+            IconButton(onClick = { isVisible = !isVisible }) {
+                Icon(
+                    painter = painterResource(id = image),
+                    contentDescription = null
+                )
+            }
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            focusedBorderColor = Color(0xFFBABABA),
+            unfocusedBorderColor = Color(0xFFBABABA),
             focusedTextColor = Color(0xFF1F1F1F),
             unfocusedTextColor = Color(0xFF1F1F1F)
         ),

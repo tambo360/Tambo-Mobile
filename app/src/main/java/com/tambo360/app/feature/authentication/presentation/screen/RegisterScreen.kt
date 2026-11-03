@@ -14,7 +14,8 @@ import com.tambo360.app.feature.authentication.presentation.viewmodel.RegisterVi
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel = hiltViewModel(),
-    goTo: (String) -> Unit
+    goTo: (String) -> Unit,
+    onClickBack : () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var registeredEmail by remember { mutableStateOf("") }
@@ -36,6 +37,7 @@ fun RegisterScreen(
                 email = email,
                 password = pass
             )
-        }
+        },
+        onClickBack = onClickBack
     )
 }

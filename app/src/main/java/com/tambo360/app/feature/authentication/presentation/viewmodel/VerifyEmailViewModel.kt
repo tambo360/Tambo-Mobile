@@ -7,6 +7,8 @@ import com.tambo360.app.core.util.JsonUtils
 import com.tambo360.app.feature.authentication.data.dto.ResendVerificationRequest
 import com.tambo360.app.feature.authentication.data.dto.VerifyEmailRequest
 import com.tambo360.app.feature.authentication.domain.repository.AuthRepository
+import com.tambo360.app.feature.authentication.presentation.viewmodel.states.TimerUiState
+import com.tambo360.app.feature.authentication.presentation.viewmodel.states.VerifyEmailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

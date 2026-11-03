@@ -30,10 +30,10 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="https"
-                    android:host="tambo360-qa.vercel.app"
-                    android:path="/verificar" />
+                <data android:scheme="https" />
+                <data android:host="tambo360-qa.vercel.app" />
+                <data android:path="/verificar" />
+                <data android:path="/recuperar-contrasena" />
             </intent-filter>
         </activity>
     </application>

@@ -50,11 +50,12 @@ import com.tambo360.app.feature.authentication.presentation.components.ConfirmPa
 import com.tambo360.app.feature.authentication.presentation.components.EmailField
 import com.tambo360.app.feature.authentication.presentation.components.NameField
 import com.tambo360.app.feature.authentication.presentation.components.PasswordField
-import com.tambo360.app.feature.authentication.presentation.viewmodel.RegisterUiState
+import com.tambo360.app.feature.authentication.presentation.viewmodel.states.RegisterUiState
 
 @Composable
 fun RegisterContent(
     state: RegisterUiState,
+    onClickBack : () -> Unit,
     onRegisterClick: (String, String, String) -> Unit
 ) {
 
@@ -97,11 +98,10 @@ fun RegisterContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.logotipo),
+                        painter = painterResource(id = R.drawable.newlogo),
                         contentDescription = "Logo Tambo",
                         modifier = Modifier.size(120.dp)
                     )
-                    Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         text = "Crear cuenta",
                         style = TextStyle(
@@ -221,26 +221,35 @@ fun RegisterContent(
                         }
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.W400)) {
-                                append("¿Ya tenes una cuenta? ")
-                            }
-                            withStyle(SpanStyle(fontWeight = FontWeight.W700)) {
-                                append("Inicia sesion")
-                            }
-                        },
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
-                            color = Color(0xFF252525),
-                            textAlign = TextAlign.Center
-                        ),
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { }
-                            .padding(8.dp)
-                    )
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "¿Ya tenes una cuenta? ",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontWeight = FontWeight.W400,
+                                color = Color(0xFF252525)
+                            )
+                        )
+                        Text(
+                            text = "Inicia sesion",
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                fontWeight = FontWeight.W700,
+                                color = Color(0xFF252525)
+                            ),
+                            modifier = Modifier
+                                .clickable(onClick = onClickBack)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }

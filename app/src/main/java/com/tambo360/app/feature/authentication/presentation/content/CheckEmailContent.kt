@@ -3,6 +3,7 @@ package com.tambo360.app.feature.authentication.presentation.content
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,12 +12,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,18 +31,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tambo360.app.R
 import com.tambo360.app.feature.authentication.presentation.components.ResendEmailButton
-import com.tambo360.app.feature.authentication.presentation.viewmodel.TimerUiState
-import com.tambo360.app.feature.authentication.presentation.viewmodel.VerifyEmailUiState
+import com.tambo360.app.feature.authentication.presentation.viewmodel.states.TimerUiState
+import com.tambo360.app.feature.authentication.presentation.viewmodel.states.VerifyEmailUiState
 
 @Composable
 fun CheckEmailContent(
+    email: String,
     state: VerifyEmailUiState,
     timerState: TimerUiState,
-    onResendClick: () -> Unit
-){
+    onResendClick: () -> Unit,
+    onChangeEmail : () -> Unit
+) {
     val scrollState = rememberScrollState()
     val buttonText = if (timerState.isRunning) {
         "Reenviar email (${timerState.formattedTime})"
@@ -55,7 +59,7 @@ fun CheckEmailContent(
     ) {
         Image(
             painter = painterResource(id = R.drawable.register_image),
-            contentDescription = "Fondo de pantalla",
+            contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
@@ -77,27 +81,26 @@ fun CheckEmailContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.logotipo),
+                        painter = painterResource(id = R.drawable.newlogo),
                         contentDescription = "",
                         modifier = Modifier.size(120.dp)
                     )
-                    Spacer(modifier = Modifier.height(40.dp))
                     Text(
                         text = "Revisa tu email",
-                        fontWeight = FontWeight.W700,
-                        fontSize = 28.sp,
-                        lineHeight = 30.sp,
-                        color = Color(0xFF000000),
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 36.sp,
+                        lineHeight = 50.sp,
+                        color = Color(0xFF0B1001),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(25.dp))
                     Text(
-                        text = "Haz clic en el enlace del email para activar tu \ncuenta  y comenzar a usar Tambo360.",
+                        text = "Enviamos un enlace de activación a $email \nHacé clic en el enlace para activar tu cuenta y comenzar a usar Tambo360.",
                         fontWeight = FontWeight.W400,
-                        fontSize = 14.sp,
+                        fontSize = 13.sp,
                         lineHeight = 20.sp,
-                        color = Color(0xFF4B5563),
+                        color = Color(0xFF626059),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -108,6 +111,31 @@ fun CheckEmailContent(
                         enabled = !timerState.isRunning,
                         onClick = onResendClick
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    OutlinedButton(
+                        onClick = onChangeEmail,
+                        modifier = Modifier
+                            .width(345.dp)
+                            .height(55.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(
+                            start = 32.dp,
+                            top = 16.dp,
+                            end = 32.dp,
+                            bottom = 16.dp
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF171717)
+                        )
+                    ) {
+                        Text(
+                            text = "Cambiar email",
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            fontWeight = FontWeight.W700,
+                            color = Color.White
+                        )
+                    }
                 }
             }
         }

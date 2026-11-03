@@ -15,8 +15,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.tambo360.app.core.ui.viewmodel.StartScreenViewModel
 import com.tambo360.app.core.ui.viewmodel.UiState
+import com.tambo360.app.feature.authentication.presentation.screen.ChangePasswordScreen
 import com.tambo360.app.feature.authentication.presentation.screen.CheckEmailScreen
+import com.tambo360.app.feature.authentication.presentation.screen.ForgotCheckScreen
 import com.tambo360.app.feature.authentication.presentation.screen.LoginScreen
+import com.tambo360.app.feature.authentication.presentation.screen.ForgotPasswordScreen
 import com.tambo360.app.feature.authentication.presentation.screen.RegisterScreen
 
 @Composable
@@ -28,7 +31,7 @@ fun AppScreen(
     when (val currentState = state) {
         UiState.Login -> {
             LoginScreen(
-                goToRecoverPassword = { },
+                goToRecoverPassword = { viewModel.updateUiState(state = UiState.Forgot) },
                 goToRegister = { viewModel.updateUiState(state = UiState.Register) },
                 goTo = { viewModel.updateUiState(state = UiState.Home) }
             )
@@ -38,6 +41,9 @@ fun AppScreen(
             RegisterScreen(
                 goTo = { email ->
                     viewModel.updateUiState(state = UiState.CheckEmail(email))
+                },
+                onClickBack = {
+                    viewModel.updateUiState(state = UiState.Login)
                 }
             )
         }
@@ -46,8 +52,44 @@ fun AppScreen(
             CheckEmailScreen(
                 email = currentState.email,
                 token = token,
-                onVerificationSuccess = {
-                    viewModel.updateUiState(state = UiState.Home)
+                onChangeEmail = {
+                    viewModel.updateUiState(state = UiState.Register)
+                },
+                goTo = {
+                    viewModel.updateUiState(state = UiState.CheckEmail())
+                }
+            )
+        }
+
+        UiState.Forgot -> {
+            ForgotPasswordScreen(
+                goBack = {
+                    viewModel.updateUiState(state = UiState.Login)
+                },
+                goTo = { email ->
+                    viewModel.updateUiState(state = UiState.ForgotCheck(email = email))
+                }
+            )
+        }
+
+         is UiState.ForgotCheck -> {
+             ForgotCheckScreen(
+                 token = token,
+                 email = currentState.email,
+                 onChangeEmail = {
+                     viewModel.updateUiState(state = UiState.Forgot)
+                 },
+                 goTo = {
+                     viewModel.updateUiState(state = UiState.ChangePassword)
+                 }
+             )
+        }
+
+        UiState.ChangePassword -> {
+            ChangePasswordScreen(
+                token = token,
+                goToLogin = {
+                    viewModel.updateUiState(state = UiState.Login)
                 }
             )
         }

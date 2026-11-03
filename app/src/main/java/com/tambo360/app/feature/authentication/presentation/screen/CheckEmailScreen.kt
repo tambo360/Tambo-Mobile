@@ -5,14 +5,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.tambo360.app.core.ui.components.LoadingScreen
 import com.tambo360.app.feature.authentication.presentation.content.CheckEmailContent
+import com.tambo360.app.feature.authentication.presentation.content.VerificationContent
 import com.tambo360.app.feature.authentication.presentation.viewmodel.VerifyEmailViewModel
 
 @Composable
 fun CheckEmailScreen(
-    email : String,
+    email: String,
     token: String?,
-    onVerificationSuccess: () -> Unit,
+    onChangeEmail: () -> Unit,
+    goTo : () -> Unit,
     viewModel: VerifyEmailViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -22,17 +25,30 @@ fun CheckEmailScreen(
             viewModel.verifyEmail(token)
         }
     }
-    LaunchedEffect(state.data) {
-        if (state.data?.success == true) {
-            onVerificationSuccess()
+
+    LaunchedEffect(state) {
+        state.data?.let {
+            if (it.success){
+                goTo()
+            }
         }
     }
 
-    CheckEmailContent(
-        state = state,
-        timerState = timerState,
-        onResendClick = {
-            viewModel.resendVerification(email = email)
-        }
-    )
+    if (state.loading) {
+        LoadingScreen()
+    }
+
+    if (state.data?.success == true) {
+        VerificationContent()
+    } else {
+        CheckEmailContent(
+            state = state,
+            email = email,
+            timerState = timerState,
+            onChangeEmail = onChangeEmail,
+            onResendClick = {
+                viewModel.resendVerification(email = email)
+            }
+        )
+    }
 }
