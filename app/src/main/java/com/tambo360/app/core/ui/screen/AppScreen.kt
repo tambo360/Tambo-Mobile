@@ -21,6 +21,7 @@ import com.tambo360.app.feature.authentication.presentation.screen.ForgotCheckSc
 import com.tambo360.app.feature.authentication.presentation.screen.LoginScreen
 import com.tambo360.app.feature.authentication.presentation.screen.ForgotPasswordScreen
 import com.tambo360.app.feature.authentication.presentation.screen.RegisterScreen
+import com.tambo360.app.feature.onboarding.presentation.screen.OnboardingMainScreen
 
 @Composable
 fun AppScreen(
@@ -55,8 +56,8 @@ fun AppScreen(
                 onChangeEmail = {
                     viewModel.updateUiState(state = UiState.Register)
                 },
-                goTo = {
-                    viewModel.updateUiState(state = UiState.CheckEmail())
+                goToOnboarding = {
+                    viewModel.updateUiState(state = UiState.Onboarding)
                 }
             )
         }
@@ -92,6 +93,10 @@ fun AppScreen(
                     viewModel.updateUiState(state = UiState.Login)
                 }
             )
+        }
+
+        UiState.Onboarding -> {
+            OnboardingMainScreen()
         }
 
         UiState.Home -> {

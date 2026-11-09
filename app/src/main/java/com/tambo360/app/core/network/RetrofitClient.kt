@@ -1,5 +1,6 @@
 package com.tambo360.app.core.network
 
+import okhttp3.CookieJar
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -9,10 +10,11 @@ import kotlin.collections.forEach
 
 object RetrofitClient {
     private var retrofit: Retrofit? = null
-    fun getClient(interceptor: MutableList<Interceptor>): Retrofit? {
+
+    fun getClient(interceptor: MutableList<Interceptor>, cookieJar: CookieJar): Retrofit? {
         if (retrofit == null) {
             retrofit = Retrofit.Builder()
-                .client(getOkHttpLog(interceptor))
+                .client(getOkHttpLog(interceptor, cookieJar))
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(ServiceConstants.BASE_URL)
                 .build()
@@ -20,17 +22,20 @@ object RetrofitClient {
         return retrofit
     }
 
-    private fun getOkHttpLog(interceptor: MutableList<Interceptor>): OkHttpClient {
+    private fun getOkHttpLog(
+        interceptor: MutableList<Interceptor>,
+        cookieJar: CookieJar
+    ): OkHttpClient {
         val okHttpBuilder = OkHttpClient.Builder()
-        okHttpBuilder
+            .cookieJar(cookieJar)
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
-        interceptor.let {
-            interceptor.forEach {
-                okHttpBuilder.addInterceptor(it)
-            }
+
+        interceptor.forEach {
+            okHttpBuilder.addInterceptor(it)
         }
+
         return okHttpBuilder.build()
     }
 }

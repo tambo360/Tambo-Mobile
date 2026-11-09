@@ -57,7 +57,8 @@ fun ErrorMessage(
             color = errorColor,
             fontWeight = FontWeight.W600,
             fontSize = 13.sp,
-            lineHeight = 15.sp
+            lineHeight = 15.sp,
+            maxLines = 3
         )
     }
 }

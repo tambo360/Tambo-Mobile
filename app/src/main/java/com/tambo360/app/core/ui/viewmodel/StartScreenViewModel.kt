@@ -68,5 +68,6 @@ sealed class UiState {
     data object ChangePassword : UiState()
     data class ForgotCheck(val email: String = "") : UiState()
     data class CheckEmail(val email: String = "") : UiState()
+    data object Onboarding : UiState()
     data object Home : UiState()
 }
