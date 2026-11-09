@@ -36,7 +36,9 @@ import androidx.compose.ui.unit.sp
 import com.tambo360.app.R
 
 @Composable
-fun VerificationContent() {
+fun VerificationContent(
+    goToOnboarding : () -> Unit
+) {
     val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
@@ -98,7 +100,7 @@ fun VerificationContent() {
                     )
                     Spacer(modifier = Modifier.height(32.dp))
                     Button(
-                        onClick = { /* TODO: Agregar acción */ },
+                        onClick = goToOnboarding,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),

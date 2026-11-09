@@ -15,7 +15,7 @@ fun CheckEmailScreen(
     email: String,
     token: String?,
     onChangeEmail: () -> Unit,
-    goTo : () -> Unit,
+    goToOnboarding : () -> Unit,
     viewModel: VerifyEmailViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -26,29 +26,23 @@ fun CheckEmailScreen(
         }
     }
 
-    LaunchedEffect(state) {
-        state.data?.let {
-            if (it.success){
-                goTo()
-            }
+    when {
+        state.loading -> {
+            LoadingScreen()
         }
-    }
-
-    if (state.loading) {
-        LoadingScreen()
-    }
-
-    if (state.data?.success == true) {
-        VerificationContent()
-    } else {
-        CheckEmailContent(
-            state = state,
-            email = email,
-            timerState = timerState,
-            onChangeEmail = onChangeEmail,
-            onResendClick = {
-                viewModel.resendVerification(email = email)
-            }
-        )
+        state.data?.success == true -> {
+            VerificationContent(goToOnboarding = goToOnboarding)
+        }
+        else -> {
+            CheckEmailContent(
+                state = state,
+                email = email,
+                timerState = timerState,
+                onChangeEmail = onChangeEmail,
+                onResendClick = {
+                    viewModel.resendVerification(email = email)
+                }
+            )
+        }
     }
 }

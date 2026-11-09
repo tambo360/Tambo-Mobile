@@ -100,7 +100,9 @@ fun ForgotPasswordContent(
                         color = Color(0xFF626059),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W400,
-                        lineHeight = 20.sp
+                        lineHeight = 20.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     EmailField(

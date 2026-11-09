@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: AuthRepository,
-    private val tokenRepo : TokenRepository
+    private val repository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -35,7 +34,6 @@ class LoginViewModel @Inject constructor(
 
             when (val result = repository.loginUser(request)) {
                 is NetworkResult.Success -> {
-                    tokenRepo.saveTokens(result.data.data.token)
                     _uiState.update { it.copy(loading = false, data = result.data) }
                 }
 

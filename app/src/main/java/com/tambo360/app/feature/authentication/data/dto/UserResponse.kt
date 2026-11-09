@@ -10,5 +10,5 @@ data class UserResponse(
     @SerializedName("correo") val correo: String,
     @SerializedName("verificado") val verificado: Boolean,
     @SerializedName("fechaCreacion") val fechaCreacion: String,
-    @SerializedName("organizaciones") val organizaciones: List<String>
+    @SerializedName("organizaciones") val organizaciones: List<OrganizacionResponse>
 )

@@ -24,6 +24,7 @@ fun ForgotPasswordScreen(
         state.data?.let {
             if (it.success) {
                 goTo(forgotEmail)
+                viewModel.resetState()
             }
         }
     }

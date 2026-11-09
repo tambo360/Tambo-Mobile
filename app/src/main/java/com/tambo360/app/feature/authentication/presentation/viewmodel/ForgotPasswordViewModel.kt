@@ -69,6 +69,10 @@ class ForgotPasswordViewModel @Inject constructor(
         }
     }
 
+    fun resetState() {
+        _uiState.update { it.copy(data = null, error = "") }
+    }
+
     fun configureTimer(timeInSeconds: Long) {
         val timeInMillis = timeInSeconds * 1000L
         _timerState.update {
