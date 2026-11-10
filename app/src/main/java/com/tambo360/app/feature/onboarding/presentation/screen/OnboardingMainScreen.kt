@@ -22,7 +22,11 @@ fun OnboardingMainScreen(
         }
 
         is OnboardingMainUiState.StepByStep -> {
-            StepByStepContent()
+            StepByStepContent(
+                onFinishClick = { request ->
+
+                }
+            )
         }
 
         OnboardingMainUiState.Completed -> {
