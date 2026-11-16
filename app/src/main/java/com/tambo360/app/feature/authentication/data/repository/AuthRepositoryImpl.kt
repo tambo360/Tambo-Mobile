@@ -82,6 +82,7 @@ class AuthRepositoryImpl @Inject constructor(
             }
             when (result) {
                 is NetworkResult.Success -> {
+                    setLoggedIn(true)
                     NetworkResult.Success(result.data.toDomain())
                 }
 
