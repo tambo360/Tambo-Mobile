@@ -3,6 +3,7 @@ package com.tambo360.app.core.ui.viewmodel
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import com.tambo360.app.feature.authentication.domain.repository.AuthRepository
+import com.tambo360.app.feature.onboarding.domain.repository.OrganizationStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,7 +12,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StartScreenViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val orgStorage: OrganizationStorage
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.Login)
     val uiState = _uiState.asStateFlow()
@@ -26,11 +28,15 @@ class StartScreenViewModel @Inject constructor(
 
     private fun checkInitialState() {
         val isLoggedIn = repository.isLoggedIn()
-        if (isLoggedIn) {
-            _uiState.update { UiState.Home }
-        } else {
-            _uiState.update { UiState.Login }
+        val isOnboardingCompleted = orgStorage.isOnboardingCompleted()
+
+        val initialState = when {
+            !isLoggedIn -> UiState.Login
+            !isOnboardingCompleted -> UiState.Onboarding
+            else -> UiState.Home
         }
+
+        _uiState.update { initialState }
     }
 
     fun updateUiState(state: UiState) {
@@ -50,6 +56,7 @@ class StartScreenViewModel @Inject constructor(
                     _uiState.update { UiState.CheckEmail() }
                 }
             }
+
             "/recuperar-contrasena" -> {
                 if (!token.isNullOrEmpty()) {
                     _tokenState.update { token }
@@ -57,6 +64,15 @@ class StartScreenViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun onLoginSuccess() {
+        val nextState = if (orgStorage.isOnboardingCompleted()) {
+            UiState.Home
+        } else {
+            UiState.Onboarding
+        }
+        _uiState.update { nextState }
     }
 
 }

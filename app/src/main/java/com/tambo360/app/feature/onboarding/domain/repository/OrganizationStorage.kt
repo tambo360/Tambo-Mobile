@@ -5,4 +5,6 @@ interface OrganizationStorage {
     fun getIdEst(): String?
     fun getIdOrg(): String?
     fun clear()
+    fun setOnboardingCompleted(completed: Boolean)
+    fun isOnboardingCompleted(): Boolean
 }

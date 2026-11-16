@@ -34,7 +34,7 @@ fun AppScreen(
             LoginScreen(
                 goToRecoverPassword = { viewModel.updateUiState(state = UiState.Forgot) },
                 goToRegister = { viewModel.updateUiState(state = UiState.Register) },
-                goTo = { viewModel.updateUiState(state = UiState.Home) }
+                goTo = { viewModel.onLoginSuccess() }
             )
         }
 

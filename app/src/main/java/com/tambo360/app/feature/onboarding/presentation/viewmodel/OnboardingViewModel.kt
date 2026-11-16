@@ -79,6 +79,7 @@ class OnboardingViewModel @Inject constructor(
                 request = request
             )) {
                 is NetworkResult.Success -> {
+                    orgStorage.setOnboardingCompleted(true)
                     _uiState.update { it.copy(loading = false, questionnaireResult = result.data) }
                 }
 
