@@ -1,6 +1,5 @@
 package com.tambo360.app.feature.onboarding.presentation.content
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,17 +25,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,20 +41,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.tambo360.app.feature.onboarding.data.dto.request.AnimalRequest
 import com.tambo360.app.feature.onboarding.data.dto.request.QuestionnaireRequest
-import com.tambo360.app.feature.onboarding.data.dto.request.RazaRequest
-import com.tambo360.app.feature.onboarding.data.dto.request.UbicacionRequest
 import com.tambo360.app.feature.onboarding.presentation.components.CustomDropdown
 import com.tambo360.app.feature.onboarding.presentation.components.CustomRadioButton
-import com.tambo360.app.feature.onboarding.presentation.components.RodeoCategoryCard
+import com.tambo360.app.feature.onboarding.presentation.components.IconBackWithText
+import com.tambo360.app.feature.onboarding.presentation.components.ProductionStep
+import com.tambo360.app.feature.onboarding.presentation.components.ProductionStepAccepted
+import com.tambo360.app.feature.onboarding.presentation.components.ProductionStepCancelled
 import com.tambo360.app.feature.onboarding.presentation.components.StepsProgress
 import com.tambo360.app.feature.onboarding.presentation.util.BreedManagerUtil
-import com.tambo360.app.feature.onboarding.presentation.util.QuestionnaireBuilderUtil
-import com.tambo360.app.feature.onboarding.presentation.util.orEmptyString
-import com.tambo360.app.feature.onboarding.presentation.util.orZero
-import com.tambo360.app.feature.onboarding.presentation.util.toDoubleOrDefault
-import com.tambo360.app.feature.onboarding.presentation.util.toIntOrDefault
 import com.tambo360.app.feature.onboarding.presentation.viewmodel.OnboardingViewModel
 
 enum class ConfigStep(val stepNumber: Int) {
@@ -77,41 +67,18 @@ enum class ProductionStatus {
 
 @Composable
 fun StepByStepContent(
-    viewModel: OnboardingViewModel = hiltViewModel(),
+    viewModel: OnboardingViewModel,
     onFinishClick: (QuestionnaireRequest) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var currentStep by remember { mutableStateOf(ConfigStep.LOCATION) }
-    val totalSteps = 3
+    val form = uiState.formData
     val scrollState = rememberScrollState()
-    var productionStatus by remember { mutableStateOf(ProductionStatus.NORMAL) }
-
-    var selectedProvince by remember { mutableStateOf<String?>(null) }
-    var selectedLocation by remember { mutableStateOf<String?>(null) }
-    var milksPerDay by remember { mutableStateOf<Int?>(null) }
-    var installationType by remember { mutableStateOf<String?>(null) }
-    var averageLiters by remember { mutableStateOf("") }
-    var milkDestination by remember { mutableStateOf<String?>(null) }
-    var averageDEL by remember { mutableStateOf("") }
-    var salePrice by remember { mutableStateOf("") }
-
-    var altoAnimalCount by remember { mutableStateOf("") }
-    var altoRationCost by remember { mutableStateOf("") }
-    val altoRazas = remember { mutableStateListOf<RazaRequest>() }
-
-    var bajoAnimalCount by remember { mutableStateOf("") }
-    var bajoRationCost by remember { mutableStateOf("") }
-    val bajoRazas = remember { mutableStateListOf<RazaRequest>() }
-
-    var secoAnimalCount by remember { mutableStateOf("") }
-    var secoRationCost by remember { mutableStateOf("") }
-    val secoRazas = remember { mutableStateListOf<RazaRequest>() }
-
-    var selectedProvinceId by remember { mutableStateOf<String?>(null) }
-    var selectedProvinceName by remember { mutableStateOf<String?>(null) }
-    var selectedLocationName by remember { mutableStateOf<String?>(null) }
-    val provinciasNombres = uiState.provincias.map { it.nombre }
-    val localidadesNombres = uiState.localidades.map { it.nombre }
+    val stepTitle = when (uiState.currentStep) {
+        ConfigStep.LOCATION -> null
+        ConfigStep.ORDENE -> "Ordeñe"
+        ConfigStep.PRODUCTION -> "Registro de animales"
+    }
+    val isFinishingLoading = uiState.currentStep == ConfigStep.PRODUCTION && uiState.loading
 
     Column(
         modifier = Modifier
@@ -121,9 +88,15 @@ fun StepByStepContent(
             .navigationBarsPadding()
             .imePadding()
     ) {
+        if (stepTitle != null) {
+            IconBackWithText(
+                title = stepTitle,
+                onBackClick = { viewModel.onPreviousStep() }
+            )
+        }
         StepsProgress(
-            currentStep = currentStep.stepNumber,
-            totalSteps = totalSteps,
+            currentStep = uiState.currentStep.stepNumber,
+            totalSteps = 3,
             modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
         )
         Column(
@@ -132,72 +105,253 @@ fun StepByStepContent(
                 .weight(1f)
                 .verticalScroll(scrollState)
         ) {
-            when (currentStep) {
+            when (uiState.currentStep) {
                 ConfigStep.LOCATION -> {
                     LocationStep(
-                        provinciasList = provinciasNombres,
-                        localidadesList = localidadesNombres,
-                        selectedProvince = selectedProvinceName,
+                        provinciasList = uiState.provincias.map { it.nombre },
+                        localidadesList = uiState.localidades.map { it.nombre },
+                        selectedProvince = uiState.selectedProvincia?.nombre,
                         onProvinceChanged = { provinceName ->
-                            selectedProvinceName = provinceName
-                            selectedLocationName = null
-                            val provinciaSeleccionada = uiState.provincias.find { it.nombre == provinceName }
-                            if (provinciaSeleccionada != null) {
-                                selectedProvinceId = provinciaSeleccionada.id
-                                viewModel.onProvinciaSelected(provinciaSeleccionada)
+                            val prov = uiState.provincias.find { it.nombre == provinceName }
+                            if (prov != null) viewModel.onProvinciaSelected(prov)
+                        },
+                        selectedLocation = form.selectedLocationName,
+                        onLocationChanged = { loc ->
+                            viewModel.updateFormData {
+                                it.copy(
+                                    selectedLocationName = loc
+                                )
                             }
                         },
-                        selectedLocation = selectedLocationName,
-                        onLocationChanged = { selectedLocationName = it },
                         isLoadingLocations = uiState.loading
                     )
                 }
 
                 ConfigStep.ORDENE -> {
                     OrdeneStep(
-                        productionStatus = productionStatus,
-                        onStatusChanged = { productionStatus = it },
-                        milksPerDay = milksPerDay,
-                        onMilksPerDayChanged = { milksPerDay = it },
-                        installationType = installationType,
-                        onInstallationTypeChanged = { installationType = it },
-                        averageLiters = averageLiters,
-                        onAverageLitersChanged = { averageLiters = it },
-                        milkDestination = milkDestination,
-                        onMilkDestinationChanged = { milkDestination = it },
-                        averageDEL = averageDEL,
-                        onAverageDELChanged = { averageDEL = it },
-                        salePrice = salePrice,
-                        onSalePriceChanged = { salePrice = it }
+                        productionStatus = form.productionStatus,
+                        onStatusChanged = { st ->
+                            viewModel.updateFormData {
+                                it.copy(
+                                    productionStatus = st
+                                )
+                            }
+                        },
+                        milksPerDay = form.milksPerDay,
+                        onMilksPerDayChanged = { m -> viewModel.updateFormData { it.copy(milksPerDay = m) } },
+                        installationType = form.installationType,
+                        onInstallationTypeChanged = { i ->
+                            viewModel.updateFormData {
+                                it.copy(
+                                    installationType = i
+                                )
+                            }
+                        },
+                        averageLiters = form.averageLiters,
+                        onAverageLitersChanged = { l ->
+                            viewModel.updateFormData {
+                                it.copy(
+                                    averageLiters = l
+                                )
+                            }
+                        },
+                        milkDestination = form.milkDestination,
+                        onMilkDestinationChanged = { d ->
+                            viewModel.updateFormData {
+                                it.copy(
+                                    milkDestination = d
+                                )
+                            }
+                        },
+                        averageDEL = form.averageDEL,
+                        onAverageDELChanged = { d -> viewModel.updateFormData { it.copy(averageDEL = d) } },
+                        salePrice = form.salePrice,
+                        onSalePriceChanged = { p -> viewModel.updateFormData { it.copy(salePrice = p) } }
                     )
                 }
 
                 ConfigStep.PRODUCTION -> {
-                    when (productionStatus) {
-                        ProductionStatus.ACCEPTED -> {}
-                        ProductionStatus.CANCELED -> {}
+                    when (form.productionStatus) {
+                        ProductionStatus.ACCEPTED -> {
+                            ProductionStepAccepted(
+                                animalesCount = form.individualAnimales.size,
+                                codigoAnimal = form.tempAnimalCodigo,
+                                onCodigoAnimalChange = { c ->
+                                    viewModel.updateFormData {
+                                        it.copy(
+                                            tempAnimalCodigo = c
+                                        )
+                                    }
+                                },
+                                nombreAnimal = form.tempAnimalNombre,
+                                onNombreAnimalChange = { n ->
+                                    viewModel.updateFormData {
+                                        it.copy(
+                                            tempAnimalNombre = n
+                                        )
+                                    }
+                                },
+                                selectedRaza = form.tempAnimalSelectedRaza,
+                                onRazaSelected = { r ->
+                                    viewModel.updateFormData {
+                                        it.copy(
+                                            tempAnimalSelectedRaza = r
+                                        )
+                                    }
+                                },
+                                selectedCategoria = form.tempAnimalSelectedCategoria,
+                                onCategoriaSelected = { c ->
+                                    viewModel.updateFormData {
+                                        it.copy(
+                                            tempAnimalSelectedCategoria = c
+                                        )
+                                    }
+                                },
+                                selectedEstado = form.tempAnimalSelectedEstado,
+                                onEstadoSelected = { e ->
+                                    viewModel.updateFormData {
+                                        it.copy(
+                                            tempAnimalSelectedEstado = e
+                                        )
+                                    }
+                                },
+                                onAddAnimal = {
+                                    viewModel.updateFormData { current ->
+                                        if (current.tempAnimalCodigo.isNotBlank() &&
+                                            current.tempAnimalNombre.isNotBlank() &&
+                                            current.tempAnimalSelectedRaza != null &&
+                                            current.tempAnimalSelectedCategoria != null &&
+                                            current.tempAnimalSelectedEstado != null
+                                        ) {
+                                            val newAnimal = AnimalRequest(
+                                                codigo = current.tempAnimalCodigo.trim(),
+                                                nombre = current.tempAnimalNombre.trim(),
+                                                raza = current.tempAnimalSelectedRaza,
+                                                categoria = current.tempAnimalSelectedCategoria,
+                                                estado = current.tempAnimalSelectedEstado
+                                            )
+                                            current.copy(
+                                                individualAnimales = current.individualAnimales + newAnimal,
+                                                tempAnimalCodigo = "",
+                                                tempAnimalNombre = "",
+                                                tempAnimalSelectedRaza = null,
+                                                tempAnimalSelectedCategoria = null,
+                                                tempAnimalSelectedEstado = null
+                                            )
+                                        } else {
+                                            current
+                                        }
+                                    }
+                                }
+                            )
+                        }
+
+                        ProductionStatus.CANCELED -> {
+                            ProductionStepCancelled(
+                                unicoAnimalCount = form.unicoAnimalCount,
+                                onUnicoAnimalCountChange = { v ->
+                                    viewModel.updateFormData { it.copy(unicoAnimalCount = v) }
+                                },
+                                unicoRationCost = form.unicoRationCost,
+                                onUnicoRationCostChange = { v ->
+                                    viewModel.updateFormData { it.copy(unicoRationCost = v) }
+                                },
+                                onAddUnicoBreed = { r, c ->
+                                    viewModel.updateFormData { current ->
+                                        val list = current.unicoRazas.toMutableList()
+                                        BreedManagerUtil.processAndAddBreed(r, c, list)
+                                        current.copy(
+                                            unicoRazas = list,
+                                            savedUnicoRationCost = current.unicoRationCost.ifBlank { current.savedUnicoRationCost },
+                                            unicoAnimalCount = "",
+                                            unicoRationCost = ""
+                                        )
+                                    }
+                                },
+                                secaAnimalCount = form.unicaSecaAnimalCount,
+                                onSecaAnimalCountChange = { v ->
+                                    viewModel.updateFormData { it.copy(unicaSecaAnimalCount = v) }
+                                },
+                                secaRationCost = form.unicaSecaRationCost,
+                                onSecaRationCostChange = { v ->
+                                    viewModel.updateFormData { it.copy(unicaSecaRationCost = v) }
+                                },
+                                onAddSecaBreed = { r, c ->
+                                    viewModel.updateFormData { current ->
+                                        val list = current.unicaSecaRazas.toMutableList()
+                                        BreedManagerUtil.processAndAddBreed(r, c, list)
+                                        current.copy(
+                                            unicaSecaRazas = list,
+                                            savedUnicaSecaRationCost = current.unicaSecaRationCost.ifBlank { current.savedUnicaSecaRationCost },
+                                            unicaSecaAnimalCount = "",
+                                            unicaSecaRationCost = ""
+                                        )
+                                    }
+                                }
+                            )
+                        }
+
                         ProductionStatus.NORMAL -> {
                             ProductionStep(
-                                altoAnimalCount = altoAnimalCount,
-                                onAltoAnimalCountChange = { altoAnimalCount = it },
-                                altoRationCost = altoRationCost,
-                                onAltoRationCostChange = { altoRationCost = it },
-                                onAddAltoBreed = { raza, cant ->
-                                    BreedManagerUtil.processAndAddBreed(raza, cant, altoRazas)
+                                altoAnimalCount = form.altoAnimalCount,
+                                onAltoAnimalCountChange = { v ->
+                                    viewModel.updateFormData { it.copy(altoAnimalCount = v) }
                                 },
-                                bajoAnimalCount = bajoAnimalCount,
-                                onBajoAnimalCountChange = { bajoAnimalCount = it },
-                                bajoRationCost = bajoRationCost,
-                                onBajoRationCostChange = { bajoRationCost = it },
-                                onAddBajoBreed = { raza, cant ->
-                                    BreedManagerUtil.processAndAddBreed(raza, cant, bajoRazas)
+                                altoRationCost = form.altoRationCost,
+                                onAltoRationCostChange = { v ->
+                                    viewModel.updateFormData { it.copy(altoRationCost = v) }
                                 },
-                                secoAnimalCount = secoAnimalCount,
-                                onSecoAnimalCountChange = { secoAnimalCount = it },
-                                secoRationCost = secoRationCost,
-                                onSecoRationCostChange = { secoRationCost = it },
-                                onAddSecoBreed = { raza, cant ->
-                                    BreedManagerUtil.processAndAddBreed(raza, cant, secoRazas)
+                                onAddAltoBreed = { r, c ->
+                                    viewModel.updateFormData { current ->
+                                        val list = current.altoRazas.toMutableList()
+                                        BreedManagerUtil.processAndAddBreed(r, c, list)
+                                        current.copy(
+                                            altoRazas = list,
+                                            savedAltoRationCost = current.altoRationCost.ifBlank { current.savedAltoRationCost },
+                                            altoAnimalCount = "",
+                                            altoRationCost = ""
+                                        )
+                                    }
+                                },
+                                bajoAnimalCount = form.bajoAnimalCount,
+                                onBajoAnimalCountChange = { v ->
+                                    viewModel.updateFormData { it.copy(bajoAnimalCount = v) }
+                                },
+                                bajoRationCost = form.bajoRationCost,
+                                onBajoRationCostChange = { v ->
+                                    viewModel.updateFormData { it.copy(bajoRationCost = v) }
+                                },
+                                onAddBajoBreed = { r, c ->
+                                    viewModel.updateFormData { current ->
+                                        val list = current.bajoRazas.toMutableList()
+                                        BreedManagerUtil.processAndAddBreed(r, c, list)
+                                        current.copy(
+                                            bajoRazas = list,
+                                            savedBajoRationCost = current.bajoRationCost.ifBlank { current.savedBajoRationCost },
+                                            bajoAnimalCount = "",
+                                            bajoRationCost = ""
+                                        )
+                                    }
+                                },
+                                secoAnimalCount = form.secoAnimalCount,
+                                onSecoAnimalCountChange = { v ->
+                                    viewModel.updateFormData { it.copy(secoAnimalCount = v) }
+                                },
+                                secoRationCost = form.secoRationCost,
+                                onSecoRationCostChange = { v ->
+                                    viewModel.updateFormData { it.copy(secoRationCost = v) }
+                                },
+                                onAddSecoBreed = { r, c ->
+                                    viewModel.updateFormData { current ->
+                                        val list = current.secoRazas.toMutableList()
+                                        BreedManagerUtil.processAndAddBreed(r, c, list)
+                                        current.copy(
+                                            secoRazas = list,
+                                            savedSecoRationCost = current.secoRationCost.ifBlank { current.savedSecoRationCost },
+                                            secoAnimalCount = "",
+                                            secoRationCost = ""
+                                        )
+                                    }
                                 }
                             )
                         }
@@ -205,84 +359,38 @@ fun StepByStepContent(
                 }
             }
         }
-        Row(
+        Button(
+            onClick = {
+                if (!uiState.loading) {
+                    if (uiState.currentStep == ConfigStep.PRODUCTION) {
+                        onFinishClick(viewModel.generateFinalRequest())
+                    } else {
+                        viewModel.onNextStep()
+                    }
+                }
+            },
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF236E44),
+                contentColor = Color.White,
+                disabledContainerColor = Color(0xFFE5E7EB),
+                disabledContentColor = Color(0xFFA0AAB5)
+            ),
+            enabled = uiState.isNextEnabled && !uiState.loading,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
+                .height(48.dp)
         ) {
-            OutlinedButton(
-                onClick = {
-                    currentStep = when (currentStep) {
-                        ConfigStep.PRODUCTION -> ConfigStep.ORDENE
-                        ConfigStep.ORDENE -> ConfigStep.LOCATION
-                        ConfigStep.LOCATION -> ConfigStep.LOCATION
-                    }
-                },
-                shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, Color(0xFFE5E7EB)),
-                enabled = currentStep != ConfigStep.LOCATION,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp)
-            ) {
-                Text(
-                    text = "Anterior",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp,
-                    lineHeight = 24.sp,
-                    color = if (currentStep == ConfigStep.LOCATION) Color.Gray else Color(0xFF0F1216)
+            if (isFinishingLoading) {
+                CircularProgressIndicator(
+                    color = Color(0xFF236E44),
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(24.dp)
                 )
-            }
-            Button(
-                onClick = {
-                    when (currentStep) {
-                        ConfigStep.LOCATION -> currentStep = ConfigStep.ORDENE
-                        ConfigStep.ORDENE -> currentStep = ConfigStep.PRODUCTION
-                        ConfigStep.PRODUCTION -> {
-                            val trackingType =
-                                QuestionnaireBuilderUtil.getTrackingType(productionStatus)
-
-                            val herdList = QuestionnaireBuilderUtil.buildHerdList(
-                                trackingType = trackingType,
-                                highRationCost = altoRationCost,
-                                highBreeds = altoRazas,
-                                lowRationCost = bajoRationCost,
-                                lowBreeds = bajoRazas,
-                                dryRationCost = secoRationCost,
-                                dryBreeds = secoRazas
-                            )
-                            val request = QuestionnaireRequest(
-                                tipoSeguimiento = trackingType.apiValue,
-                                cantOrdenie = milksPerDay.orZero(),
-                                tipoOrdenie = installationType.orEmptyString(),
-                                promDEL = averageDEL.toIntOrDefault(),
-                                promLitros = averageLiters.toDoubleOrDefault(),
-                                ventaLeche = milkDestination.orEmptyString(),
-                                precioLitro = salePrice.toDoubleOrDefault(),
-                                ubicacion = UbicacionRequest(
-                                    provincia = selectedProvince.orEmptyString(),
-                                    localidad = selectedLocation.orEmptyString()
-                                ),
-                                rodeos = herdList,
-                                animales = null
-                            )
-                            onFinishClick(request)
-                        }
-                    }
-                },
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF236E44),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp)
-            ) {
+            } else {
                 Text(
-                    text = if (currentStep == ConfigStep.PRODUCTION) "Finalizar" else "Siguiente",
+                    text = if (uiState.currentStep == ConfigStep.PRODUCTION) "Finalizar" else "Siguiente",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
                     lineHeight = 24.sp
@@ -480,12 +588,12 @@ fun OrdeneStep(
         OutlinedTextField(
             value = averageLiters,
             onValueChange = { newValue ->
-                if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                if (newValue.length <= 8 && (newValue.isEmpty() || newValue.all { it.isDigit() })) {
                     onAverageLitersChanged(newValue)
-                }
-                val liters = newValue.toIntOrNull() ?: 0
-                if (newValue.isEmpty() || liters >= 2001) {
-                    onStatusChanged(ProductionStatus.NORMAL)
+                    val liters = newValue.toIntOrNull() ?: 0
+                    if (newValue.isEmpty() || liters >= 2001) {
+                        onStatusChanged(ProductionStatus.NORMAL)
+                    }
                 }
             },
             placeholder = {
@@ -530,7 +638,7 @@ fun OrdeneStep(
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "*Recordá que un rodeo eficiente suele promediar entre 150 y 180 días.",
+            text = "Recordá que un rodeo eficiente suele promediar entre 150 y 180 días.",
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             lineHeight = 20.sp,
@@ -540,7 +648,7 @@ fun OrdeneStep(
         OutlinedTextField(
             value = averageDEL,
             onValueChange = { newValue ->
-                if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                if (newValue.length <= 4 && (newValue.isEmpty() || newValue.all { it.isDigit() })) {
                     onAverageDELChanged(newValue)
                 }
             },
@@ -572,7 +680,7 @@ fun OrdeneStep(
         OutlinedTextField(
             value = salePrice,
             onValueChange = { newValue ->
-                if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*\$"))) {
+                if (newValue.length <= 8 && (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*\$")))) {
                     onSalePriceChanged(newValue)
                 }
             },
@@ -646,111 +754,5 @@ fun OrdeneStep(
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
-    }
-}
-
-@Composable
-fun ProductionStep(
-    altoAnimalCount: String,
-    onAltoAnimalCountChange: (String) -> Unit,
-    altoRationCost: String,
-    onAltoRationCostChange: (String) -> Unit,
-    onAddAltoBreed: (String, String) -> Unit,
-    bajoAnimalCount: String,
-    onBajoAnimalCountChange: (String) -> Unit,
-    bajoRationCost: String,
-    onBajoRationCostChange: (String) -> Unit,
-    onAddBajoBreed: (String, String) -> Unit,
-    secoAnimalCount: String,
-    onSecoAnimalCountChange: (String) -> Unit,
-    secoRationCost: String,
-    onSecoRationCostChange: (String) -> Unit,
-    onAddSecoBreed: (String, String) -> Unit
-) {
-    var expandedCategory by remember { mutableStateOf("Rodeo Alto") }
-    val mockBreedList = listOf("HOLANDO_ARGENTINO", "JERSEY", "ANGUS", "HEREFORD", "CRUZA")
-    var altoSelectedBreed by remember { mutableStateOf<String?>(null) }
-    var altoBreedCount by remember { mutableStateOf("") }
-
-    var bajoSelectedBreed by remember { mutableStateOf<String?>(null) }
-    var bajoBreedCount by remember { mutableStateOf("") }
-
-    var secoSelectedBreed by remember { mutableStateOf<String?>(null) }
-    var secoBreedCount by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        RodeoCategoryCard(
-            title = "Rodeo Alto",
-            subtitle = if (altoAnimalCount.isEmpty()) "Sin datos" else "$altoAnimalCount animales",
-            animalCount = altoAnimalCount,
-            onAnimalCountChange = onAltoAnimalCountChange,
-            rationCost = altoRationCost,
-            onRationCostChange = onAltoRationCostChange,
-            breedOptions = mockBreedList,
-            selectedBreed = altoSelectedBreed,
-            onBreedSelected = { altoSelectedBreed = it },
-            breedCount = altoBreedCount,
-            onBreedCountChange = { altoBreedCount = it },
-            onAddBreedClick = { breed, count ->
-                onAddAltoBreed(breed, count)
-                altoSelectedBreed = null
-                altoBreedCount = ""
-            },
-            isExpanded = expandedCategory == "Rodeo Alto",
-            onExpandClick = {
-                expandedCategory = if (expandedCategory == "Rodeo Alto") "" else "Rodeo Alto"
-            }
-        )
-
-        RodeoCategoryCard(
-            title = "Rodeo Bajo",
-            subtitle = if (bajoAnimalCount.isEmpty()) "Sin datos" else "$bajoAnimalCount animales",
-            animalCount = bajoAnimalCount,
-            onAnimalCountChange = onBajoAnimalCountChange,
-            rationCost = bajoRationCost,
-            onRationCostChange = onBajoRationCostChange,
-            breedOptions = mockBreedList,
-            selectedBreed = bajoSelectedBreed,
-            onBreedSelected = { bajoSelectedBreed = it },
-            breedCount = bajoBreedCount,
-            onBreedCountChange = { bajoBreedCount = it },
-            onAddBreedClick = { breed, count ->
-                onAddBajoBreed(breed, count)
-                bajoSelectedBreed = null
-                bajoBreedCount = ""
-            },
-            isExpanded = expandedCategory == "Rodeo Bajo",
-            onExpandClick = {
-                expandedCategory = if (expandedCategory == "Rodeo Bajo") "" else "Rodeo Bajo"
-            }
-        )
-
-        RodeoCategoryCard(
-            title = "Rodeo en Seco",
-            subtitle = if (secoAnimalCount.isEmpty()) "Sin datos" else "$secoAnimalCount animales",
-            animalCount = secoAnimalCount,
-            onAnimalCountChange = onSecoAnimalCountChange,
-            rationCost = secoRationCost,
-            onRationCostChange = onSecoRationCostChange,
-            breedOptions = mockBreedList,
-            selectedBreed = secoSelectedBreed,
-            onBreedSelected = { secoSelectedBreed = it },
-            breedCount = secoBreedCount,
-            onBreedCountChange = { secoBreedCount = it },
-            onAddBreedClick = { breed, count ->
-                onAddSecoBreed(breed, count)
-                secoSelectedBreed = null
-                secoBreedCount = ""
-            },
-            isExpanded = expandedCategory == "Rodeo en Seco",
-            onExpandClick = {
-                expandedCategory = if (expandedCategory == "Rodeo en Seco") "" else "Rodeo en Seco"
-            }
-        )
     }
 }

@@ -54,7 +54,7 @@ import com.tambo360.app.feature.onboarding.presentation.viewmodel.states.Onboard
 
 @Composable
 fun CreateEstablishmentContent(
-    goToStep : () -> Unit,
+    goToStep: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
@@ -215,16 +215,27 @@ fun CreateStep(
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = establishmentName,
-                onValueChange = { establishmentName = it },
+                onValueChange = { newValue ->
+                    if (newValue.length <= 50) {
+                        establishmentName = newValue
+                    }
+                },
                 singleLine = true,
                 textStyle = TextStyle(
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     color = Color.Black
                 ),
+                placeholder = {
+                    Text(
+                        text = "Ej. Estancia La Esperanza",
+                        fontSize = 14.sp,
+                        color = Color(0xFF555B63)
+                    )
+                },
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .height(55.dp)
                     .shadow(
                         elevation = 2.dp,
                         shape = RoundedCornerShape(8.dp),
@@ -252,7 +263,7 @@ fun CreateStep(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF29845A)
             ),
-            enabled = !state.loading
+            enabled = !state.loading && establishmentName.trim().length >= 6
         ) {
             if (state.loading) {
                 CircularProgressIndicator(

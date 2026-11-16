@@ -17,17 +17,17 @@ class OrganizationStorageImpl @Inject constructor(
         private const val KEY_ID_ORGANIZACION = "id_organizacion"
     }
 
-    override fun saveIds(idEstablecimiento: String, idOrganizacion: String) {
+    override fun saveIds(idEst: String, idOrg: String) {
         prefs.edit {
-            putString(KEY_ID_ESTABLECIMIENTO, idEstablecimiento)
-            putString(KEY_ID_ORGANIZACION, idOrganizacion)
+            putString(KEY_ID_ESTABLECIMIENTO, idEst)
+            putString(KEY_ID_ORGANIZACION, idOrg)
         }
     }
 
-    override fun getIdEstablecimiento(): String? =
+    override fun getIdEst(): String? =
         prefs.getString(KEY_ID_ESTABLECIMIENTO, null)
 
-    override fun getIdOrganizacion(): String? =
+    override fun getIdOrg(): String? =
         prefs.getString(KEY_ID_ORGANIZACION, null)
 
     override fun clear() {

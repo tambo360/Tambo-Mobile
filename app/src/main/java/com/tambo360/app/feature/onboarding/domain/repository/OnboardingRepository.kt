@@ -10,6 +10,10 @@ interface OnboardingRepository {
 
     suspend fun createOrganization(request: CreateOrganizationRequest): NetworkResult<CreateOrganization>
 
-    suspend fun submitQuestionnaire(request: QuestionnaireRequest): NetworkResult<QuestionnaireResult>
+    suspend fun submitQuestionnaire(
+        idOrg: String,
+        idEst: String,
+        request: QuestionnaireRequest
+    ): NetworkResult<QuestionnaireResult>
 
 }

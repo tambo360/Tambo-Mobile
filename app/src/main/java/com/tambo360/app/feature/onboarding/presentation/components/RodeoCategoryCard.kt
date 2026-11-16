@@ -63,6 +63,10 @@ fun RodeoCategoryCard(
         targetValue = if (isExpanded) 180f else 0f,
         label = "ArrowRotation"
     )
+    val isAddEnabled = animalCount.isNotBlank() &&
+            rationCost.isNotBlank() &&
+            !selectedBreed.isNullOrBlank() &&
+            breedCount.isNotBlank()
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -100,7 +104,7 @@ fun RodeoCategoryCard(
                     )
                 }
                 Icon(
-                    painter = painterResource(R.drawable.arrowright),
+                    painter = painterResource(R.drawable.ic_keyboard_arrow_down),
                     contentDescription = if (isExpanded) "Colapsar" else "Expandir",
                     modifier = Modifier.rotate(arrowRotation),
                     tint = Color(0xFF0F1216)
@@ -122,7 +126,8 @@ fun RodeoCategoryCard(
                         value = animalCount,
                         onValueChange = onAnimalCountChange,
                         placeholder = "000",
-                        keyboardType = KeyboardType.Number
+                        keyboardType = KeyboardType.Number,
+                        maxLength = 9
                     )
 
                     CustomInputField(
@@ -130,7 +135,8 @@ fun RodeoCategoryCard(
                         value = rationCost,
                         onValueChange = onRationCostChange,
                         placeholder = "$ 0.00",
-                        keyboardType = KeyboardType.Decimal
+                        keyboardType = KeyboardType.Decimal,
+                        maxLength = 9
                     )
 
                     Card(
@@ -181,12 +187,13 @@ fun RodeoCategoryCard(
                                         value = breedCount,
                                         onValueChange = onBreedCountChange,
                                         placeholder = "000",
-                                        keyboardType = KeyboardType.Number
+                                        keyboardType = KeyboardType.Number,
+                                        maxLength = 9
                                     )
 
                                     Button(
                                         onClick = {
-                                            if (selectedBreed != null && breedCount.isNotBlank()) {
+                                            if (isAddEnabled && selectedBreed != null) {
                                                 onAddBreedClick(selectedBreed, breedCount)
                                             }
                                         },
@@ -194,10 +201,11 @@ fun RodeoCategoryCard(
                                         shape = RoundedCornerShape(8.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = Color(0xFF236E44)
-                                        )
+                                        ),
+                                        enabled = isAddEnabled
                                     ) {
                                         Icon(
-                                            painter = painterResource(R.drawable.arrowright),
+                                            painter = painterResource(R.drawable.ic_add),
                                             contentDescription = null,
                                             tint = Color.White
                                         )
@@ -225,7 +233,8 @@ private fun CustomInputField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    maxLength: Int = Int.MAX_VALUE
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -240,7 +249,8 @@ private fun CustomInputField(
             value = value,
             onValueChange = onValueChange,
             placeholder = placeholder,
-            keyboardType = keyboardType
+            keyboardType = keyboardType,
+            maxLength = maxLength
         )
     }
 }
@@ -251,7 +261,8 @@ private fun CustomInputFieldContainer(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    maxLength: Int = Int.MAX_VALUE
 ) {
     Box(
         modifier = modifier
@@ -272,7 +283,19 @@ private fun CustomInputFieldContainer(
         }
         BasicTextField(
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = { newValue ->
+                if (newValue.length <= maxLength) {
+                    val isValid = when (keyboardType) {
+                        KeyboardType.Number -> newValue.all { it.isDigit() }
+                        KeyboardType.Decimal -> newValue.all { it.isDigit() || it == '.' || it == ',' } &&
+                                newValue.count { it == '.' || it == ',' } <= 1
+                        else -> true
+                    }
+                    if (isValid) {
+                        onValueChange(newValue)
+                    }
+                }
+            },
             singleLine = true,
             textStyle = TextStyle(
                 fontSize = 16.sp,

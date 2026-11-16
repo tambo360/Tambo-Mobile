@@ -21,6 +21,8 @@ interface OnboardingApi {
     @POST("establecimiento/cuestionario")
     @Headers("Content-Type: application/json")
     suspend fun submitQuestionnaire(
+        @Header("x-organizacion-id") idOrganizacion: String,
+        @Header("x-establecimiento-id") idEstablecimiento: String,
         @Body request: QuestionnaireRequest
     ): Response<QuestionnaireResponse>
 

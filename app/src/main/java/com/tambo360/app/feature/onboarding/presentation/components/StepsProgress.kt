@@ -32,7 +32,7 @@ fun StepsProgress(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 2.dp)
+            .padding(horizontal = 16.dp)
     ) {
         Text(
             text = "Paso $currentStep de $totalSteps",

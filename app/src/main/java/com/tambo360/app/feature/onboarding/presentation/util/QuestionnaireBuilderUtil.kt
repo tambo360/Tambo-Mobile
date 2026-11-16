@@ -56,4 +56,38 @@ object QuestionnaireBuilderUtil {
 
         return herds.takeIf { it.isNotEmpty() }
     }
+
+    fun buildSingleHerdList(
+        trackingType: TrackingType,
+        unicoRationCost: String,
+        unicoBreeds: List<RazaRequest>,
+        dryRationCost: String,
+        dryBreeds: List<RazaRequest>
+    ): List<RodeoRequest>? {
+        if (trackingType !is TrackingType.SingleHerd) return null
+
+        val herds = mutableListOf<RodeoRequest>()
+
+        if (unicoBreeds.isNotEmpty()) {
+            herds.add(
+                RodeoRequest(
+                    tipoRodeo = "UNICO_ORDENIE",
+                    costoRacion = unicoRationCost.toDoubleOrNull() ?: 0.0,
+                    razas = unicoBreeds
+                )
+            )
+        }
+
+        if (dryBreeds.isNotEmpty()) {
+            herds.add(
+                RodeoRequest(
+                    tipoRodeo = "UNICO_SECA",
+                    costoRacion = dryRationCost.toDoubleOrNull() ?: 0.0,
+                    razas = dryBreeds
+                )
+            )
+        }
+
+        return herds.takeIf { it.isNotEmpty() }
+    }
 }

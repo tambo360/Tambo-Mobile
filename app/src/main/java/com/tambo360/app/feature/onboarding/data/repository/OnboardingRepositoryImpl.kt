@@ -27,6 +27,7 @@ class OnboardingRepositoryImpl @Inject constructor(
                 is NetworkResult.Success -> {
                     NetworkResult.Success(result.data.toDomain())
                 }
+
                 is NetworkResult.Failed -> {
                     NetworkResult.Failed(result.message)
                 }
@@ -34,18 +35,22 @@ class OnboardingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun submitQuestionnaire(request: QuestionnaireRequest): NetworkResult<QuestionnaireResult> {
+    override suspend fun submitQuestionnaire(
+        idOrg: String,
+        idEst: String,
+        request: QuestionnaireRequest
+    ): NetworkResult<QuestionnaireResult> {
         return withContext(Dispatchers.IO) {
             val result = safeApiCall {
-                onboardingApi.submitQuestionnaire(request = request)
+                onboardingApi.submitQuestionnaire(
+                    idOrganizacion = idOrg,
+                    idEstablecimiento = idEst,
+                    request = request
+                )
             }
             when (result) {
-                is NetworkResult.Success -> {
-                    NetworkResult.Success(result.data.toDomain())
-                }
-                is NetworkResult.Failed -> {
-                    NetworkResult.Failed(result.message)
-                }
+                is NetworkResult.Success -> NetworkResult.Success(result.data.toDomain())
+                is NetworkResult.Failed -> NetworkResult.Failed(result.message)
             }
         }
     }

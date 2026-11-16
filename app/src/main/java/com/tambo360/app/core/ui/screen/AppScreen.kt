@@ -96,7 +96,11 @@ fun AppScreen(
         }
 
         UiState.Onboarding -> {
-            OnboardingMainScreen()
+            OnboardingMainScreen(
+                goToHome = {
+                    viewModel.updateUiState(state = UiState.Home)
+                }
+            )
         }
 
         UiState.Home -> {

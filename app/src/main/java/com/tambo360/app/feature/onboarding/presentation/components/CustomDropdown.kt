@@ -92,7 +92,7 @@ fun CustomDropdown(
                     color = if (selectedItem == null) Color(0xFF555B63) else Color(0xFF0F1216)
                 )
                 Icon(
-                    painter = painterResource(R.drawable.arrowright),
+                    painter = painterResource(R.drawable.ic_keyboard_arrow_down),
                     contentDescription = "Abrir menú",
                     tint = Color(0xFF555B63)
                 )
