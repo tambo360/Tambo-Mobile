@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class RegisterUserResponse(
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
-    @SerializedName("data") val data: RegisterUserDataResponse
+    @SerializedName("data") val data: RegisterUserDataResponse? = null
 )
 

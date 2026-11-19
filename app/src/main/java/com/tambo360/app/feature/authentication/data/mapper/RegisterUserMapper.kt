@@ -10,7 +10,7 @@ object RegisterUserMapper {
         return RegisterUser(
             success = success,
             message = message,
-            data = data.toDomain()
+            data = data?.toDomain()
         )
     }
 
