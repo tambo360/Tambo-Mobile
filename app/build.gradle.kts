@@ -75,4 +75,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     //CRYPTO
     implementation(libs.androidx.security.crypto)
+    //ROOM
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 }
