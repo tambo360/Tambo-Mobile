@@ -31,12 +31,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tambo360.app.R
+import com.tambo360.app.core.util.formatLoteNumber
+import com.tambo360.app.core.util.formatLoteUnit
+import com.tambo360.app.feature.home.domain.model.LoteItem
 
 @Composable
 fun TodayProduction(
+    lotes: List<LoteItem>,
     onSeeAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val visibleLotes = lotes.take(3)
+
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -67,7 +73,7 @@ fun TodayProduction(
             )
             Icon(
                 painter = painterResource(R.drawable.arrowright),
-                contentDescription = "",
+                contentDescription = null,
                 tint = Color(0xFF527602),
                 modifier = Modifier.size(20.dp)
             )
@@ -85,31 +91,41 @@ fun TodayProduction(
             color = Color(0xFFDDE2E8)
         )
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            TodayProductionItem(
-                id = "005",
-                title = "Queso pategrás",
-                subtitle = "384 Kg · Merma 20 Kg",
-                price = "$100.000"
-            )
-            TodayProductionItem(
-                id = "004",
-                title = "Leche entera",
-                subtitle = "1.200 L · Merma 20 L",
-                price = "$204.000"
-            )
-            TodayProductionItem(
-                id = "005",
-                title = "Queso pategrás",
-                subtitle = "384 Kg · Merma 20 Kg",
-                price = "$100.000"
-            )
-            TodayProductionItem(
-                id = "004",
-                title = "Leche entera",
-                subtitle = "1.200 L · Merma 20 L",
-                price = "$204.000"
-            )
+        if (visibleLotes.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 28.dp, horizontal = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Aún no hay lotes registrados",
+                    color = Color(0xFF565B63),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 20.sp
+                )
+            }
+        } else {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                visibleLotes.forEachIndexed { index, lote ->
+                    val unitLabel = formatLoteUnit(lote.unidad)
+                    val totalMerma = lote.mermas.sumOf { it.cantidad }
+                    val totalCostos = lote.costosDirectos.sumOf { it.monto }
+
+                    TodayProductionItem(
+                        id = lote.numeroLote.toString().padStart(3, '0'),
+                        title = lote.producto?.nombre?.takeIf { it.isNotBlank() }
+                            ?: "Lote #${lote.numeroLote}",
+                        subtitle = "${formatLoteNumber(lote.cantidad)} $unitLabel · Merma ${
+                            formatLoteNumber(
+                                totalMerma
+                            )
+                        } $unitLabel",
+                        price = "$${formatLoteNumber(totalCostos)}"
+                    )
+                }
+            }
         }
     }
 }

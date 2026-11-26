@@ -17,16 +17,47 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tambo360.app.core.util.capitalizeFirst
+import com.tambo360.app.core.util.formatCompactCurrency
+import com.tambo360.app.core.util.formatCurrency
+import com.tambo360.app.core.util.formatNumber
 import com.tambo360.app.feature.home.presentation.components.DashboardSection
 import com.tambo360.app.feature.home.presentation.components.ProductionChartSection
 import com.tambo360.app.feature.home.presentation.components.TodayProduction
+import com.tambo360.app.feature.home.presentation.viewmodel.HomeUiState
 
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    onSeeAllClick: () -> Unit
+    onSeeAllClick: () -> Unit,
+    uiState: HomeUiState = HomeUiState()
 ) {
     val scrollState = rememberScrollState()
+    val summary = uiState.currentMonthSummary
+    val litrosTotalesText = summary?.let { formatNumber(it.actualLeches) } ?: "--"
+    val mermaText = summary?.let { "${formatNumber(it.actualMermas)} L" } ?: "--"
+    val freeLiters = uiState.freeLiters
+    val costosTotalesText = if (summary != null || freeLiters != null) {
+        val totalCostos = (summary?.actualCostos ?: 0.0) + (freeLiters?.costosGenerales ?: 0.0)
+        formatCompactCurrency(totalCostos)
+    } else {
+        "--"
+    }
+    val litrosLibresText = freeLiters?.let { "${formatNumber(it.litrosLibres)} L" } ?: "--"
+    val precioMercadoText = uiState.marketPrice?.let { formatCurrency(it.precioLitro) } ?: "--"
+    val produccionPoints = uiState.lechesCantidadChart?.resultado.orEmpty()
+    val mermasPoints = uiState.lechesMermasChart?.resultado.orEmpty()
+
+    val mesesChart = (produccionPoints.ifEmpty { mermasPoints })
+        .map { it.mes.capitalizeFirst() }
+
+    val produccionValues = List(mesesChart.size) { index ->
+        produccionPoints.getOrNull(index)?.valor?.toFloat() ?: 0f
+    }
+    val mermasValues = List(mesesChart.size) { index ->
+        mermasPoints.getOrNull(index)?.valor?.toFloat() ?: 0f
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -56,11 +87,11 @@ fun HomeContent(
         )
         Spacer(modifier = Modifier.height(5.dp))
         DashboardSection(
-            litrosTotales = "48.200",
-            merma = "1.240 L",
-            costosTotales = "$3,2M",
-            litrosLibres = "$27,5",
-            precioMercadoHoy = "$385.50"
+            litrosTotales = litrosTotalesText,
+            merma = mermaText,
+            costosTotales = costosTotalesText,
+            litrosLibres = litrosLibresText,
+            precioMercadoHoy = precioMercadoText
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
@@ -74,12 +105,13 @@ fun HomeContent(
         )
         Spacer(modifier = Modifier.height(10.dp))
         ProductionChartSection(
-            meses = listOf("Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"),
-            mermasActuales = listOf(9600f, 2200f, 2000f, 3200f, 2100f),
-            costosActuales = listOf(1900f, 9000f, 11000f, 10200f, 12400f)
+            meses = mesesChart,
+            mermasActuales = mermasValues,
+            costosActuales = produccionValues
         )
         Spacer(modifier = Modifier.height(20.dp))
         TodayProduction(
+            lotes = uiState.lotes,
             onSeeAllClick = onSeeAllClick
         )
         Spacer(modifier = Modifier.height(10.dp))
