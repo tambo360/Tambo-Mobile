@@ -16,6 +16,8 @@ class OrganizationStorageImpl @Inject constructor(
         private const val KEY_ID_ESTABLECIMIENTO = "id_establecimiento"
         private const val KEY_ID_ORGANIZACION = "id_organizacion"
         private const val KEY_NAME = "organization_name"
+        private const val KEY_LOCALIDAD = "localidad"
+        private const val KEY_PROVINCIA = "provincia"
         private const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
     }
 
@@ -40,6 +42,19 @@ class OrganizationStorageImpl @Inject constructor(
 
     override fun getName(): String? =
         prefs.getString(KEY_NAME, null)
+
+    override fun saveLocation(localidad: String, provincia: String) {
+        prefs.edit {
+            putString(KEY_LOCALIDAD, localidad)
+            putString(KEY_PROVINCIA, provincia)
+        }
+    }
+
+    override fun getLocalidad(): String? =
+        prefs.getString(KEY_LOCALIDAD, null)
+
+    override fun getProvincia(): String? =
+        prefs.getString(KEY_PROVINCIA, null)
 
     override fun setOnboardingCompleted(completed: Boolean) {
         prefs.edit {

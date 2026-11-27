@@ -81,6 +81,10 @@ class OnboardingViewModel @Inject constructor(
             )) {
                 is NetworkResult.Success -> {
                     orgStorage.setOnboardingCompleted(true)
+                    orgStorage.saveLocation(
+                        localidad = request.ubicacion.localidad,
+                        provincia = request.ubicacion.provincia
+                    )
                     _uiState.update { it.copy(loading = false, questionnaireResult = result.data) }
                 }
 

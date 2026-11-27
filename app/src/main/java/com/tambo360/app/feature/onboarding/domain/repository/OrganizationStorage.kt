@@ -6,6 +6,9 @@ interface OrganizationStorage {
     fun getIdOrg(): String?
     fun saveName(name: String)
     fun getName(): String?
+    fun saveLocation(localidad: String, provincia: String)
+    fun getLocalidad(): String?
+    fun getProvincia(): String?
     fun clear()
     fun setOnboardingCompleted(completed: Boolean)
     fun isOnboardingCompleted(): Boolean
