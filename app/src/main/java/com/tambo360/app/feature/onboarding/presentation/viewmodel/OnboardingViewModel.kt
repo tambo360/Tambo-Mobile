@@ -48,6 +48,7 @@ class OnboardingViewModel @Inject constructor(
                         idEst = orgData.idEstablecimiento,
                         idOrg = orgData.idOrganizacion
                     )
+                    orgStorage.saveName(orgData.nombre)
                     _uiState.update { it.copy(loading = false, data = result.data) }
                 }
 

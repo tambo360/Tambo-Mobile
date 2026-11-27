@@ -15,6 +15,7 @@ class OrganizationStorageImpl @Inject constructor(
     companion object {
         private const val KEY_ID_ESTABLECIMIENTO = "id_establecimiento"
         private const val KEY_ID_ORGANIZACION = "id_organizacion"
+        private const val KEY_NAME = "organization_name"
         private const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
     }
 
@@ -30,6 +31,15 @@ class OrganizationStorageImpl @Inject constructor(
 
     override fun getIdOrg(): String? =
         prefs.getString(KEY_ID_ORGANIZACION, null)
+
+    override fun saveName(name: String) {
+        prefs.edit {
+            putString(KEY_NAME, name)
+        }
+    }
+
+    override fun getName(): String? =
+        prefs.getString(KEY_NAME, null)
 
     override fun setOnboardingCompleted(completed: Boolean) {
         prefs.edit {
