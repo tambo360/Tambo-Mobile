@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LoginUserResponse(
+    @SerializedName("statusCode") val statusCode: Int? = null,
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
     @SerializedName("data") val data: LoginUserDataResponse

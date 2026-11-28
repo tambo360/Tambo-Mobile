@@ -30,7 +30,11 @@ object LotesMapper {
             estado = lote.estado,
             idProducto = lote.idProducto,
             idEstablecimiento = lote.idEstablecimiento,
-            producto = lote.producto!!.toDomain(),
+            producto = lote.producto?.toDomain() ?: LoteProducto(
+                idProducto = lote.idProducto,
+                nombre = "",
+                categoria = ""
+            ),
             idRodeo = lote.idRodeo,
             cantAnimales = lote.cantAnimales,
             destino = lote.destino,

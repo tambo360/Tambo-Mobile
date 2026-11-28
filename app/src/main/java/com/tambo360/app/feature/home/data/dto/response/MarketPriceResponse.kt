@@ -1,9 +1,7 @@
 package com.tambo360.app.feature.home.data.dto.response
 
 import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class MarketPriceResponse(
     @SerializedName("statusCode") val statusCode: Int = 200,
     @SerializedName("success") val success: Boolean = false,
@@ -11,7 +9,6 @@ data class MarketPriceResponse(
     @SerializedName("data") val data: MarketPriceDataResponse = MarketPriceDataResponse()
 )
 
-@Serializable
 data class MarketPriceDataResponse(
     @SerializedName("precioLitro") val precioLitro: Double = 0.0,
     @SerializedName("mes") val mes: Int = 0,

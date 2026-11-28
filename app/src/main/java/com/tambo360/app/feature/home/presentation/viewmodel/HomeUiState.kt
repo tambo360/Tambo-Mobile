@@ -15,14 +15,7 @@ data class HomeUiState(
     val marketPrice: MarketPrice? = null,
     val lechesCantidadChart: DashboardChart? = null,
     val lechesMermasChart: DashboardChart? = null,
-    val lotes: List<LoteItem> = emptyList()
-) {
-    val hasLocalData: Boolean
-        get() = currentMonthSummary != null ||
-                generalCosts != null ||
-                freeLiters != null ||
-                marketPrice != null ||
-                lechesCantidadChart != null ||
-                lechesMermasChart != null ||
-                lotes.isNotEmpty()
-}
+    val lotes: List<LoteItem> = emptyList(),
+    val organizationName: String = "",
+    val userName: String = ""
+)

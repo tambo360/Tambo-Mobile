@@ -10,6 +10,7 @@ import com.tambo360.app.feature.home.domain.model.GeneralCosts
 import com.tambo360.app.feature.home.domain.model.LoteItem
 import com.tambo360.app.feature.home.domain.model.MarketPrice
 import com.tambo360.app.feature.home.domain.repository.HomeRepository
+import com.tambo360.app.feature.onboarding.domain.repository.OrganizationStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    homeRepository: HomeRepository
+    homeRepository: HomeRepository,
+    organizationStorage: OrganizationStorage
 ) : ViewModel() {
 
     private val metricsFlow = combine(
@@ -54,6 +56,8 @@ class HomeViewModel @Inject constructor(
     ) { metrics, chartsAndLotes ->
         HomeUiState(
             isLoading = false,
+            organizationName = organizationStorage.getName().orEmpty(),
+            userName = organizationStorage.getNameUser().orEmpty(),
             currentMonthSummary = metrics.currentMonthSummary,
             generalCosts = metrics.generalCosts,
             freeLiters = metrics.freeLiters,
@@ -65,7 +69,11 @@ class HomeViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = HomeUiState(isLoading = true)
+        initialValue = HomeUiState(
+            isLoading = true,
+            organizationName = organizationStorage.getName().orEmpty(),
+            userName = organizationStorage.getNameUser().orEmpty()
+        )
     )
 
     private data class HomeMetrics(

@@ -1,5 +1,7 @@
 package com.tambo360.app.core.util
 
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -46,4 +48,13 @@ fun formatLoteUnit(unidad: String): String {
         "kg", "kgs", "kilogramos" -> "Kg"
         else -> unidad.replaceFirstChar { it.uppercase() }
     }
+}
+
+fun formatFullCurrency(amount: Number): String {
+    val symbols = DecimalFormatSymbols(Locale("es", "AR")).apply {
+        groupingSeparator = '.'
+        decimalSeparator = ','
+    }
+    val formatter = DecimalFormat("$#,##0.##########", symbols)
+    return formatter.format(amount)
 }

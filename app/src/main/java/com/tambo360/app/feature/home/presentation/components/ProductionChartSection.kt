@@ -33,13 +33,13 @@ import androidx.compose.ui.unit.sp
 fun ProductionChartSection(
     meses: List<String>,
     mermasActuales: List<Float>,
-    costosActuales: List<Float>,
+    production: List<Float>,
     modifier: Modifier = Modifier,
     title: String = "Leche | Producción"
 ) {
     val maxValue = maxOf(
         mermasActuales.maxOrNull() ?: 0f,
-        costosActuales.maxOrNull() ?: 0f
+        production.maxOrNull() ?: 0f
     ).coerceAtLeast(1f)
 
     Card(
@@ -78,7 +78,7 @@ fun ProductionChartSection(
             ) {
                 meses.indices.forEach { index ->
                     val merma = mermasActuales.getOrElse(index) { 0f }.coerceAtLeast(0f)
-                    val costo = costosActuales.getOrElse(index) { 0f }.coerceAtLeast(0f)
+                    val costo = production.getOrElse(index) { 0f }.coerceAtLeast(0f)
 
                     val mermaFraction = (merma / maxValue).coerceIn(0f, 1f)
                     val costoFraction = (costo / maxValue).coerceIn(0f, 1f)
@@ -144,11 +144,11 @@ fun ProductionChartSection(
             ) {
                 ChartLegendItem(
                     color = Color(0xFF84A894),
-                    label = "Merma actual"
+                    label = "Merma"
                 )
                 ChartLegendItem(
                     color = Color(0xFF6BC4B3),
-                    label = "Costo actual"
+                    label = "Produccion"
                 )
             }
         }

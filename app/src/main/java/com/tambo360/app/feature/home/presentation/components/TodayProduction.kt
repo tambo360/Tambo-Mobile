@@ -72,7 +72,7 @@ fun TodayProduction(
                 lineHeight = 24.sp
             )
             Icon(
-                painter = painterResource(R.drawable.arrowright),
+                painter = painterResource(R.drawable.ic_next),
                 contentDescription = null,
                 tint = Color(0xFF527602),
                 modifier = Modifier.size(20.dp)

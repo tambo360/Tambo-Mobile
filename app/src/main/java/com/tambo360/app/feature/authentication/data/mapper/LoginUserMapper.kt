@@ -35,28 +35,24 @@ object LoginUserMapper {
             correo = correo,
             verificado = verificado,
             fechaCreacion = fechaCreacion,
-            organizaciones = organizaciones.map { it.toDomain() }
+            organizaciones = organizaciones?.map { it.toDomain() }.orEmpty()
         )
     }
+
     fun OrganizacionResponse.toDomain(): OrganizacionData {
         return OrganizacionData(
-            idOrganizacionUsuario = idOrganizacionUsuario,
-            idOrganizacion = idOrganizacion,
-            idUsuario = idUsuario,
+            idOrganizacion = organizacion.idOrganizacion,
+            nombre = organizacion.nombre,
             rol = rol,
-            estado = estado,
-            fechaCreacion = fechaCreacion,
-            establecimientoOrganizacionUsuarios = establecimientoOrganizacionUsuarios.map { it.toDomain() }
+            establecimientos = organizacion.establecimientos?.map { it.toDomain() }.orEmpty()
         )
     }
+
     fun EstablecimientoResponse.toDomain(): EstablecimientoData {
         return EstablecimientoData(
-            idEstablecimientoOrganizacionUsuario = idEstablecimientoOrganizacionUsuario,
             idEstablecimiento = idEstablecimiento,
-            idOrganizacionUsuario = idOrganizacionUsuario,
-            rol = rol,
-            estado = estado,
-            fechaCreacion = fechaCreacion
+            nombre = nombre,
+            cuestionarioCompletado = cuestionarioCompletado
         )
     }
 }

@@ -1,16 +1,13 @@
 package com.tambo360.app.feature.home.data.dto.response
 
 import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class GeneralCostsResponse(
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
     @SerializedName("data") val data: GeneralCostsDataResponse
 )
 
-@Serializable
 data class GeneralCostsDataResponse(
     @SerializedName("periodo") val periodo: String,
     @SerializedName("fechaInicio") val fechaInicio: String,
@@ -19,7 +16,6 @@ data class GeneralCostsDataResponse(
     @SerializedName("datos") val datos: List<GeneralCostItemResponse>
 )
 
-@Serializable
 data class GeneralCostItemResponse(
     @SerializedName("periodo") val periodo: String = "",
     @SerializedName("clave") val clave: String = "",

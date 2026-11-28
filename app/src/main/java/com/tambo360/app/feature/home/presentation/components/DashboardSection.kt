@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +25,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -49,7 +54,7 @@ fun DashboardSection(
             ) {
                 MetricCard(
                     title = "Litros totales",
-                    value = litrosTotales,
+                    value = "$litrosTotales L",
                     modifier = Modifier.weight(1f)
                 )
                 MetricCard(
@@ -99,6 +104,7 @@ private fun MetricCard(
             Color(0xFFEAF9F0)
         )
     )
+    var valueFontSize by remember(value) { mutableStateOf(16.sp) }
 
     Column(
         modifier = modifier
@@ -109,13 +115,13 @@ private fun MetricCard(
                 color = Color(0xFFE5E7EB),
                 shape = cardShape
             )
-            .padding(horizontal = 14.dp, vertical = 18.dp),
+            .padding(horizontal = 6.dp, vertical = 18.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
             text = title,
             color = Color(0xFF565B63),
-            fontSize = 14.sp,
+            fontSize = 12.sp,
             fontWeight = FontWeight.W400,
             lineHeight = 20.sp,
             maxLines = 1
@@ -123,10 +129,17 @@ private fun MetricCard(
         Text(
             text = value,
             color = Color(0xFF0F1216),
-            fontSize = 21.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.W700,
             lineHeight = 32.sp,
-            maxLines = 1
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = { result ->
+                if (result.hasVisualOverflow && valueFontSize > 10.sp) {
+                    valueFontSize = (valueFontSize.value - 1f).coerceAtLeast(10f).sp
+                }
+            }
         )
     }
 }
@@ -170,7 +183,7 @@ private fun MarketPriceCard(
         Text(
             text = value,
             color = Color(0xFF0F1216),
-            fontSize = 24.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.W700,
             textAlign = TextAlign.Center,
             lineHeight = 32.sp,

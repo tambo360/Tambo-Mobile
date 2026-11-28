@@ -20,11 +20,13 @@ import androidx.compose.ui.unit.sp
 import com.tambo360.app.core.util.capitalizeFirst
 import com.tambo360.app.core.util.formatCompactCurrency
 import com.tambo360.app.core.util.formatCurrency
+import com.tambo360.app.core.util.formatFullCurrency
 import com.tambo360.app.core.util.formatNumber
 import com.tambo360.app.feature.home.presentation.components.DashboardSection
 import com.tambo360.app.feature.home.presentation.components.ProductionChartSection
 import com.tambo360.app.feature.home.presentation.components.TodayProduction
 import com.tambo360.app.feature.home.presentation.viewmodel.HomeUiState
+import java.math.BigDecimal
 
 @Composable
 fun HomeContent(
@@ -38,8 +40,9 @@ fun HomeContent(
     val mermaText = summary?.let { "${formatNumber(it.actualMermas)} L" } ?: "--"
     val freeLiters = uiState.freeLiters
     val costosTotalesText = if (summary != null || freeLiters != null) {
-        val totalCostos = (summary?.actualCostos ?: 0.0) + (freeLiters?.costosGenerales ?: 0.0)
-        formatCompactCurrency(totalCostos)
+        val totalCostos = BigDecimal.valueOf(summary?.actualCostos ?: 0.0)
+            .add(BigDecimal.valueOf(freeLiters?.costosGenerales ?: 0.0))
+        formatFullCurrency(totalCostos)
     } else {
         "--"
     }
@@ -67,7 +70,7 @@ fun HomeContent(
     ) {
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Tambo La Esperanza",
+            text = uiState.organizationName,
             fontSize = 16.sp,
             fontWeight = FontWeight.W400,
             lineHeight = 24.sp,
@@ -77,12 +80,13 @@ fun HomeContent(
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = "¡Bienvenido Ramón!",
+            text = "¡Bienvenido ${uiState.userName}!",
             fontSize = 26.sp,
             fontWeight = FontWeight.W700,
             lineHeight = 32.5.sp,
             color = Color(0xFF0F1216),
             textAlign = TextAlign.Start,
+            maxLines = 2,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -107,7 +111,7 @@ fun HomeContent(
         ProductionChartSection(
             meses = mesesChart,
             mermasActuales = mermasValues,
-            costosActuales = produccionValues
+            production = produccionValues
         )
         Spacer(modifier = Modifier.height(20.dp))
         TodayProduction(

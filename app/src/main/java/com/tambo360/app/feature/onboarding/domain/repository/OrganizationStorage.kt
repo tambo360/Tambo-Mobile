@@ -6,6 +6,8 @@ interface OrganizationStorage {
     fun getIdOrg(): String?
     fun saveName(name: String)
     fun getName(): String?
+    fun saveNameUser(nameUser: String)
+    fun getNameUser(): String?
     fun saveLocation(localidad: String, provincia: String)
     fun getLocalidad(): String?
     fun getProvincia(): String?

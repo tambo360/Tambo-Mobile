@@ -1,16 +1,13 @@
 package com.tambo360.app.feature.home.data.dto.response
 
 import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class LotesResponse(
     @SerializedName("success") val success: Boolean = false,
     @SerializedName("message") val message: String = "",
     @SerializedName("data") val data: LotesDataResponse = LotesDataResponse()
 )
 
-@Serializable
 data class LotesDataResponse(
     @SerializedName("page") val page: Int = 1,
     @SerializedName("limit") val limit: Int = 10,
@@ -19,13 +16,11 @@ data class LotesDataResponse(
     @SerializedName("lotes") val lotes: List<LoteWrapperResponse> = emptyList()
 )
 
-@Serializable
 data class LoteWrapperResponse(
     @SerializedName("lote") val lote: LoteDetailResponse = LoteDetailResponse(),
     @SerializedName("merma_porcentaje") val mermaPorcentaje: Double = 0.0
 )
 
-@Serializable
 data class LoteDetailResponse(
     @SerializedName("idLote") val idLote: String = "",
     @SerializedName("numeroLote") val numeroLote: Int = 0,
@@ -47,14 +42,12 @@ data class LoteDetailResponse(
     @SerializedName("turno") val turno: String? = null
 )
 
-@Serializable
 data class LoteProductoResponse(
     @SerializedName("idProducto") val idProducto: String = "",
     @SerializedName("nombre") val nombre: String = "",
     @SerializedName("categoria") val categoria: String = ""
 )
 
-@Serializable
 data class LoteRodeoResponse(
     @SerializedName("idRodeo") val idRodeo: String = "",
     @SerializedName("tipoRodeo") val tipoRodeo: String = "",
@@ -62,7 +55,6 @@ data class LoteRodeoResponse(
     @SerializedName("cantVacas") val cantVacas: Int = 0
 )
 
-@Serializable
 data class LoteMermaResponse(
     @SerializedName("idMerma") val idMerma: String = "",
     @SerializedName("tipo") val tipo: String = "",
@@ -70,7 +62,6 @@ data class LoteMermaResponse(
     @SerializedName("fechaCreacion") val fechaCreacion: String = ""
 )
 
-@Serializable
 data class LoteCostoDirectoResponse(
     @SerializedName("idCostoDirecto") val idCostoDirecto: String = "",
     @SerializedName("concepto") val concepto: String = "",
@@ -79,7 +70,6 @@ data class LoteCostoDirectoResponse(
     @SerializedName("fechaCreacion") val fechaCreacion: String = ""
 )
 
-@Serializable
 data class LoteProduccionIndividualResponse(
     @SerializedName("idProduccionAnimal") val idProduccionAnimal: String = "",
     @SerializedName("idAnimal") val idAnimal: String = "",
